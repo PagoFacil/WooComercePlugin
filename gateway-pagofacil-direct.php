@@ -467,13 +467,22 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                 {
                     if (strtolower($_SERVER["HTTP_X_FORWARDED_FOR"]) != "unknown")
                     {
-                        return $_SERVER["HTTP_X_FORWARDED_FOR"];
+						$ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+						if (strpos($ip, ",") !== FALSE)
+						{
+							$ip = substr($ip, 0, strpos($ip, ","));
+						}
+                        return  trim($ip);
                     }
                 }
             }
-            
-            return $_SERVER['REMOTE_ADDR'];
-            
+            			
+			$ip = $_SERVER['REMOTE_ADDR'];
+			if (strpos($ip, ",") !== FALSE)
+			{
+				$ip = substr($ip, 0, strpos($ip, ","));
+			}
+			return  trim($ip);            
         }
                
 	private function isCreditCardNumber($toCheck)
