@@ -236,7 +236,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		    <input class="input-text" style="width:180px;" type="text" size="16" maxlength="16" name="pagofacil_direct_creditcard" />
 		</p>
 		<div class="clear"></div>
-		<p class="form-row form-row-first" style="width:200px;">
+		<p class="form-row form-row-first" style="width:230px;">
 		    <label>Expiration Month <span class="required">*</span></label>
 		    <select name="pagofacil_direct_expdatemonth">
 		        <option value=01> 1 - January</option>
@@ -282,10 +282,10 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                 if ($this->msi == 'yes')
                 {
                 ?>
-                    <p class="form-row" style="width:200px;">
+                    <p class="form-row" style="width:230px;">
                         <label>Installments</label>
-                        <select name="pagofacil_direct_msi" style="width:133px;">
-                            <option value="00">Seleccione</option>
+                        <select name="pagofacil_direct_msi" style="width:210px;">
+                            <option value="00">Pago en una sola exhibicion</option>
                             <optgroup label="MasterCard/Visa"></optgroup>
                             <option value="03">3 Meses</option>
                             <option value="06">6 Meses</option>
