@@ -35,6 +35,17 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		);
 		$this->card_type_options = apply_filters( 'woocommerce_pagofacil_direct_card_types', $default_card_type_options );
 		
+                $default_msi_options = array(
+                    'all' => 'All Options',
+                    '03_MasterCard/Visa' => '03 Months - MasterCard/Visa',
+                    '06_MasterCard/Visa' => '06 Months - MasterCard/Visa',
+                    '03_American Express' => '03 Months - American Express',
+                    '06_American Express' => '06 Months - American Express',
+                    '09_American Express' => '09 Months - American Express',
+                    '12_American Express' => '12 Months - American Express',
+		);
+                $this->msi_options = apply_filters('woocommerce_pagofacil_direct_msi_options', $default_msi_options);
+                
 		// Load the form fields.
 		$this->init_form_fields();
 
@@ -56,6 +67,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		$this->showdesc		= $this->get_option( 'showdesc' );                
                 // add 10/03/2014
                 $this->msi              = $this->get_option( 'msi' );
+                $this->msioptions       = $this->get_option('msioptions');
 		
                 
 		if($this->testmode == 'yes'){
@@ -213,7 +225,14 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                                 ,'label' => __( 'Enable Installments', 'woothemes' )
                                 ,'type' => 'checkbox'
                                 ,'default' => 'no'
-                            )
+                            ),
+                            'msioptions' => array(
+                                'title' => __('Installments Options', 'woothemes'),
+                                'label' => __('Installments Options', 'woothemes'),
+                                'type' => 'multiselect',
+                                'default' => array('all'),
+                                'options' => $this->msi_options,
+                            ),
 			);
 
     } // End init_form_fields()
@@ -281,19 +300,48 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                 // add 10/03/2014
                 if ($this->msi == 'yes')
                 {
+                    $msi_options = array();
+                    $msi_label_options = array(
+                        '03' => '3 Meses',
+                        '06' => '6 Meses',
+                        '09' => '9 Meses',
+                        '12' => '12 Meses',                        
+                    );
+                    
+                    if (is_array($this->msioptions)) {
+                        $msi_options = array(
+                            'MasterCard/Visa' => array('03', '06'),
+                            'American Express' => array('03', '06', '09', '12'),
+                        );
+                        if (!in_array('all', $this->msioptions)) {
+                            $msi_options = array(
+                                'MasterCard/Visa' => array(),
+                                'American Express' => array(),
+                            );
+                            foreach ($this->msioptions as $option) {
+                                $keyValue = explode('_', $option);
+                                array_push($msi_options[$keyValue[1]], $keyValue[0]);
+                            }
+                        }
+                    }
                 ?>
                     <p class="form-row" style="width:230px;">
                         <label>Installments</label>
                         <select name="pagofacil_direct_msi" style="width:210px;">
                             <option value="00">Pago en una sola exhibicion</option>
-                            <optgroup label="MasterCard/Visa"></optgroup>
-                            <option value="03">3 Meses</option>
-                            <option value="06">6 Meses</option>
-                            <optgroup label="American Express"></optgroup>
-                            <option value="03">3 Meses</option>
-                            <option value="06">6 Meses</option>
-                            <option value="09">9 Meses</option>
-                            <option value="12">12 Meses</option>
+                            <?php
+                                foreach ($msi_options as $group => $option) {
+                                    if (count($option) == 0) {
+                                        continue;
+                                    }
+                                    echo '<optgroup label="'.$group.'"></optgroup>';
+                                    foreach ($option as $value) {
+                                        echo '<option value="'.$value.'">'
+                                            .$msi_label_options[$value].
+                                        '</option>';
+                                    }
+                                }
+                            ?>
                         </select>                        
                     </p>
                     <div class="clear"></div>
