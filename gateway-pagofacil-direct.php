@@ -161,7 +161,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 							'title' => __( 'Title', 'woothemes' ),
 							'type' => 'text',
 							'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ),
-							'default' => __( 'Credit Card', 'woothemes' )
+							'default' => __( 'PagoFacil', 'woothemes' )
 						),
 			'showdesc' => array(
 							'title' => __( 'Show Description', 'woothemes' ),
@@ -354,13 +354,13 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         global $woocommerce;
 
         if (!$this->isCreditCardNumber($_POST['pagofacil_direct_creditcard']))
-            $woocommerce->add_error( __('(Credit Card Number) is not valid.', 'woothemes'));
+            $this->showError(__('(Credit Card Number) is not valid.', 'woothemes'));
 
         if (!$this->isCorrectExpireDate($_POST['pagofacil_direct_expdatemonth'], $_POST['pagofacil_direct_expdateyear']))
-            $woocommerce->add_error( __('(Card Expire Date) is not valid.', 'woothemes'));
+            $this->showError(__('(Card Expire Date) is not valid.', 'woothemes'));
 
         if (!$_POST['pagofacil_direct_cvv'])
-			$woocommerce->add_error( __('(Card CVV) is not entered.', 'woothemes'));
+            $this->showError(__('(Card CVV) is not entered.', 'woothemes'));
     }
 	
 	/**
@@ -384,7 +384,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                         'cp'                => urlencode($order->billing_postcode),
                         'mesExpiracion'     => urlencode($_POST["pagofacil_direct_expdatemonth"]),
                         'anyoExpiracion'    => urlencode($_POST["pagofacil_direct_expdateyear"]),
-                        'monto'             => urlencode($order->get_order_total()),//formato 1000.00
+                        'monto'             => urlencode($order->get_total()),//formato 1000.00
                         'email'             => urlencode($order->billing_email),
                         'telefono'          => urlencode($order->billing_phone), // son 10 digitos
                         'celular'           => urlencode($order->billing_phone), // son 10 digitos
@@ -396,9 +396,9 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                         'idPedido'          => urlencode($order_id),
                         'param1'            => urlencode(ltrim($order->get_order_number(), '#')),
                         'param2'            => urlencode($order->order_key),
-                        'param3'            => urlencode(),
-                        'param4'            => urlencode(),
-                        'param5'            => urlencode(),
+                        'param3'            => urlencode(""),
+                        'param4'            => urlencode(""),
+                        'param5'            => urlencode(""),
                         'ip'                => urlencode($this->getIpBuyer()),
                         'httpUserAgent'     => urlencode($_SERVER['HTTP_USER_AGENT'])                        
                     );
@@ -468,20 +468,18 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 						$message .= $v.'<br>';
 					}
 				
-					$woocommerce->add_error( $message );
-				    $order->add_order_note( $message );
-					
+                                        $this->showError($message);
+                                        $order->add_order_note( $message );
 				}else{
-					$woocommerce->add_error( sprintf( __('Transaction Failed. %s', 'woothemes'), $response['response']['message'] ) );
+                                    $this->showError(sprintf( __('Transaction Failed. %s', 'woothemes'), $response['response']['message'] ));
 				    $order->add_order_note( sprintf( __('Transaction Failed. %s', 'woothemes'), $response['response']['message'] ) );
 				}
 			
 			}
 			
 		}else{
-			
-			$woocommerce->add_error(__('Gateway Error. Please Notify the Store Owner about this error.', 'woothemes'));
-			$order->add_order_note(__('Gateway Error. Please Notify the Store Owner about this error.', 'woothemes'));
+                    $this->showError(__('Gateway Error. Please Notify the Store Owner about this error.', 'woothemes'));
+                    $order->add_order_note(__('Gateway Error. Please Notify the Store Owner about this error.', 'woothemes'));
 		} 	
 		
 	}
@@ -531,6 +529,22 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 				$ip = substr($ip, 0, strpos($ip, ","));
 			}
 			return  trim($ip);            
+        }
+        
+        /**
+         * 
+         * Envia mesajes de error al checkout segun la version
+         * @author ivelazquex <isai.velazquez@gmail.com>
+         * @return string
+         */
+        private function showError($message) {
+            global $woocommerce;
+            
+            if (function_exists('wc_add_notice')) { // version >= 2.3                
+                wc_add_notice($message, 'error');
+            } else { // version < 2.3
+                $woocommerce->add_error($message);
+            }
         }
                
 	private function isCreditCardNumber($toCheck)
@@ -598,6 +612,8 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 function add_pagofacil_direct_gateway( $methods ) {
 	$methods[] = 'woocommerce_pagofacil_direct'; return $methods;
 }
+
+
 
 add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway' );
 
