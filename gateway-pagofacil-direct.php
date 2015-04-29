@@ -161,7 +161,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 							'title' => __( 'Title', 'woothemes' ),
 							'type' => 'text',
 							'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ),
-							'default' => __( 'PagoFacil', 'woothemes' )
+							'default' => __( 'Credit Card', 'woothemes' )
 						),
 			'showdesc' => array(
 							'title' => __( 'Show Description', 'woothemes' ),
