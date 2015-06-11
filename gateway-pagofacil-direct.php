@@ -39,6 +39,8 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                     'all' => 'All Options',
                     '03_MasterCard/Visa' => '03 Months - MasterCard/Visa',
                     '06_MasterCard/Visa' => '06 Months - MasterCard/Visa',
+					'09_MasterCard/Visa' => '09 Months - MasterCard/Visa',
+					'12_MasterCard/Visa' => '12 Months - MasterCard/Visa',
                     '03_American Express' => '03 Months - American Express',
                     '06_American Express' => '06 Months - American Express',
                     '09_American Express' => '09 Months - American Express',
@@ -310,7 +312,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                     
                     if (is_array($this->msioptions)) {
                         $msi_options = array(
-                            'MasterCard/Visa' => array('03', '06'),
+                            'MasterCard/Visa' => array('03', '06', '09', '12'),
                             'American Express' => array('03', '06', '09', '12'),
                         );
                         if (!in_array('all', $this->msioptions)) {
