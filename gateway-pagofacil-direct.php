@@ -95,13 +95,13 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		$icon = '';
 		if ( $this->icon ) {
 			// default behavior
-			$icon = '<img src="' . $woocommerce->force_ssl( $this->icon ) . '" alt="' . $this->title . '" />';
+			$icon = '<img src="' . $this->forceSSL( $this->icon ) . '" alt="' . $this->title . '" />';
 		} elseif ( $this->cardtypes ) {
 			// display icons for the selected card types
 			$icon = '';
 			foreach ( $this->cardtypes as $cardtype ) {
 				if ( file_exists( plugin_dir_path( __FILE__ ) . '/images/card-' . strtolower( $cardtype ) . '.png' ) ) {
-					$icon .= '<img src="' . $woocommerce->force_ssl( plugins_url( '/images/card-' . strtolower( $cardtype ) . '.png', __FILE__ ) ) . '" alt="' . strtolower( $cardtype ) . '" />';
+					$icon .= '<img src="' . $this->forceSSL( plugins_url( '/images/card-' . strtolower( $cardtype ) . '.png', __FILE__ ) ) . '" alt="' . strtolower( $cardtype ) . '" />';
 				}
 			}
 		}
@@ -537,6 +537,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
          * 
          * Envia mesajes de error al checkout segun la version
          * @author ivelazquex <isai.velazquez@gmail.com>
+		 * @param $message string
          * @return string
          */
         private function showError($message) {
@@ -546,6 +547,23 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                 wc_add_notice($message, 'error');
             } else { // version < 2.3
                 $woocommerce->add_error($message);
+            }
+        }
+		
+		/**
+         * 
+         * Envia mesajes de error al checkout segun la version
+         * @author ivelazquex <isai.velazquez@gmail.com>
+		 * @param $url string
+         * @return string
+         */
+        private function forceSSL($url) {
+            global $woocommerce;
+            
+            if (class_exists('WC_HTTPS')) { // version >= 2.3                
+                return WC_HTTPS::force_https_url($url);
+            } else { // version < 2.3
+                return $woocommerce->force_ssl($url);
             }
         }
                
