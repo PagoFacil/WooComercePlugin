@@ -1,20 +1,5 @@
 <?php
 
-    /*
-    Plugin Name: Pago Facil Direct Gateway for WooCommerce
-    Plugin URI: http://www.patsatech.com
-    Description: WooCommerce Plugin for accepting payment through Pago Facil Direct Gateway.
-    Author: IRMAcreative / PatSaTech
-    Version: 1.0
-    Author URI: http://www.irmacreative.com
-    */
-
-add_action('plugins_loaded', 'init_woocommerce_pagofacil_direct', 0);
-
-function init_woocommerce_pagofacil_direct() {
-
-    if ( ! class_exists( 'WC_Payment_Gateway' ) ) { return; }
-
 class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 
 	public function __construct() {
@@ -35,18 +20,19 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		);
 		$this->card_type_options = apply_filters( 'woocommerce_pagofacil_direct_card_types', $default_card_type_options );
 		
-                $default_msi_options = array(
-                    'all' => 'All Options',
-                    '03_MasterCard/Visa' => '03 Months - MasterCard/Visa',
-                    '06_MasterCard/Visa' => '06 Months - MasterCard/Visa',
-					'09_MasterCard/Visa' => '09 Months - MasterCard/Visa',
-					'12_MasterCard/Visa' => '12 Months - MasterCard/Visa',
-                    '03_American Express' => '03 Months - American Express',
-                    '06_American Express' => '06 Months - American Express',
-                    '09_American Express' => '09 Months - American Express',
-                    '12_American Express' => '12 Months - American Express',
+        $default_msi_options = array(
+            'all' => 'All Options',
+            '03_MasterCard/Visa' => '03 Months - MasterCard/Visa',
+            '06_MasterCard/Visa' => '06 Months - MasterCard/Visa',
+			'09_MasterCard/Visa' => '09 Months - MasterCard/Visa',
+			'12_MasterCard/Visa' => '12 Months - MasterCard/Visa',
+            '03_American Express' => '03 Months - American Express',
+            '06_American Express' => '06 Months - American Express',
+            '09_American Express' => '09 Months - American Express',
+            '12_American Express' => '12 Months - American Express',
 		);
-                $this->msi_options = apply_filters('woocommerce_pagofacil_direct_msi_options', $default_msi_options);
+
+        $this->msi_options = apply_filters('woocommerce_pagofacil_direct_msi_options', $default_msi_options);
                 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -128,8 +114,8 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 	public function admin_options() {
 
     	?>
-    	<h3><?php _e('Pago Facil Direct', 'woothemes'); ?></h3>
-    	<p><?php _e('Pago Facil Gateway works by charging the customers Credit Card on site.', 'woothemes'); ?></p>
+    	<h3><?php _e('Pago Facil Direct', 'pagofacil'); ?></h3>
+    	<p><?php _e('Pago Facil Gateway works by charging the customers Credit Card on site.', 'pagofacil'); ?></p>
     	<table class="form-table">
     	<?php
     			// Generate the HTML For the settings form.
@@ -154,83 +140,83 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     	
     	$this->form_fields = array(
 			'enabled' => array(
-							'title' => __( 'Enable/Disable', 'woothemes' ),
+							'title' => __( 'Enable/Disable', 'pagofacil' ),
 							'type' => 'checkbox',
-							'label' => __( 'Enable Pago Facil Gateway', 'woothemes' ),
+							'label' => __( 'Enable Pago Facil Gateway', 'pagofacil' ),
 							'default' => 'yes'
 						),
 			'title' => array(
-							'title' => __( 'Title', 'woothemes' ),
+							'title' => __( 'Title', 'pagofacil' ),
 							'type' => 'text',
-							'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ),
-							'default' => __( 'Credit Card', 'woothemes' )
+							'description' => __( 'This controls the title which the user sees during checkout.', 'pagofacil' ),
+							'default' => __( 'Credit Card', 'pagofacil' )
 						),
 			'showdesc' => array(
-							'title' => __( 'Show Description', 'woothemes' ),
+							'title' => __( 'Show Description', 'pagofacil' ),
 							'type' => 'checkbox',
-							'label' => __( 'To Show Description', 'woothemes' ),
+							'label' => __( 'To Show Description', 'pagofacil' ),
 							'default' => 'no'
 						),
 			'description' => array(
-							'title' => __( 'Description', 'woothemes' ),
+							'title' => __( 'Description', 'pagofacil' ),
 							'type' => 'textarea',
-							'description' => __( 'This controls the description which the user sees during checkout.', 'woothemes' ),
-							'default' => __("Enter your Credit Card Details below.", 'woothemes')
+							'description' => __( 'This controls the description which the user sees during checkout.', 'pagofacil' ),
+							'default' => __("Enter your Credit Card Details below.", 'pagofacil')
 						),
 			'sucursal' => array(
-							'title' => __( 'Sucursal', 'woothemes' ), 
+							'title' => __( 'Sucursal', 'pagofacil' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your Sucursal; this is needed in order to take payment.', 'woothemes' ), 
+							'description' => __( 'Please enter your Sucursal; this is needed in order to take payment.', 'pagofacil' ), 
 							'default' => ''
 						),
 			'usuario' => array(
-							'title' => __( 'Usuario', 'woothemes' ), 
+							'title' => __( 'Usuario', 'pagofacil' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your Usuario; this is needed in order to take payment.', 'woothemes' ), 
+							'description' => __( 'Please enter your Usuario; this is needed in order to take payment.', 'pagofacil' ), 
 							'default' => ''
 						), 
 			'sendemail' => array(
-							'title' => __( 'Enable PagoFacil Notifiaction Emails', 'woothemes' ), 
+							'title' => __( 'Enable PagoFacil Notifiaction Emails', 'pagofacil' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Allow PagoFacil to Send Notification Emails.', 'woothemes' ), 
+							'label' => __( 'Allow PagoFacil to Send Notification Emails.', 'pagofacil' ), 
 							'default' => 'no'
 						),
 			'enabledivisa' => array(
-							'title' => __( 'Enable Divisa', 'woothemes' ), 
+							'title' => __( 'Enable Divisa', 'pagofacil' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable sending the Currency Code to Pago Facil via divisa parameter.', 'woothemes' ), 
+							'label' => __( 'Enable sending the Currency Code to Pago Facil via divisa parameter.', 'pagofacil' ), 
 							'default' => 'no'
 						),
 			'divisa' => array(
-							'title' 	=> __( 'Divisa', 'woocommerce' ),
+							'title' 	=> __( 'Divisa', 'pagofacil' ),
 							'desc' 		=> __( "This controls what currency that is being sent in divisa parameter to Pago Facil.", 'woocommerce' ),
 							'default'	=> 'USD',
 							'type' 		=> 'select',
 							'options'   => $currency_code_options
 						),
 			'testmode' => array(
-							'title' => __( 'Sandbox', 'woothemes' ), 
+							'title' => __( 'Sandbox', 'pagofacil' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable Sandbox', 'woothemes' ), 
+							'label' => __( 'Enable Sandbox', 'pagofacil' ), 
 							'default' => 'no'
 						),
 			'cardtypes'	=> array(
-							'title' => __( 'Accepted Card Logos', 'woothemes' ), 
+							'title' => __( 'Accepted Card Logos', 'pagofacil' ), 
 							'type' => 'multiselect', 
-							'description' => __( 'Select which card types you accept to display the logos for on your checkout page.  This is purely cosmetic and optional, and will have no impact on the cards actually accepted by your account.', 'woothemes' ), 
+							'description' => __( 'Select which card types you accept to display the logos for on your checkout page.  This is purely cosmetic and optional, and will have no impact on the cards actually accepted by your account.', 'pagofacil' ), 
 							'default' => '',
 							'options' => $this->card_type_options,
 						)
                             // add 10/03/2014
                             ,'msi' => array(
-                                'title' => __('Installments', 'woothemes')
-                                ,'label' => __( 'Enable Installments', 'woothemes' )
+                                'title' => __('Installments', 'pagofacil')
+                                ,'label' => __( 'Enable Installments', 'pagofacil' )
                                 ,'type' => 'checkbox'
                                 ,'default' => 'no'
                             ),
                             'msioptions' => array(
-                                'title' => __('Installments Options', 'woothemes'),
-                                'label' => __('Installments Options', 'woothemes'),
+                                'title' => __('Installments Options', 'pagofacil'),
+                                'label' => __('Installments Options', 'pagofacil'),
                                 'type' => 'multiselect',
                                 'default' => array('all'),
                                 'options' => $this->msi_options,
@@ -356,13 +342,13 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         global $woocommerce;
 
         if (!$this->isCreditCardNumber($_POST['pagofacil_direct_creditcard']))
-            $this->showError(__('(Credit Card Number) is not valid.', 'woothemes'));
+            $this->showError(__('(Credit Card Number) is not valid.', 'pagofacil'));
 
         if (!$this->isCorrectExpireDate($_POST['pagofacil_direct_expdatemonth'], $_POST['pagofacil_direct_expdateyear']))
-            $this->showError(__('(Card Expire Date) is not valid.', 'woothemes'));
+            $this->showError(__('(Card Expire Date) is not valid.', 'pagofacil'));
 
         if (!$_POST['pagofacil_direct_cvv'])
-            $this->showError(__('(Card CVV) is not entered.', 'woothemes'));
+            $this->showError(__('(Card CVV) is not entered.', 'pagofacil'));
     }
 	
 	/**
@@ -451,7 +437,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		   	if($response["autorizado"] == "1" && strtolower($response['status']) == 'success') {
 				
 				// Payment completed
-			    $order->add_order_note( sprintf( __('Pago Facil %s. The Pago Facil Transaction ID %s and Authorization ID %s.', 'woothemes'), $response["texto"], $response["transaccion"], $response["autorizacion"] ) );
+			    $order->add_order_note( sprintf( __('Pago Facil %s. The Pago Facil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $response["texto"], $response["transaccion"], $response["autorizacion"] ) );
 				
 			    $order->payment_complete();
 				
@@ -464,7 +450,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 				
 				if(isset($response['texto'])){
 					
-					$message = sprintf( __('Transaction Failed. %s', 'woothemes'), $response['texto'] ).'<br>';
+					$message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['texto'] ).'<br>';
 					
 					foreach( $response['error'] as $k => $v ){
 						$message .= $v.'<br>';
@@ -473,15 +459,15 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                                         $this->showError($message);
                                         $order->add_order_note( $message );
 				}else{
-                                    $this->showError(sprintf( __('Transaction Failed. %s', 'woothemes'), $response['response']['message'] ));
-				    $order->add_order_note( sprintf( __('Transaction Failed. %s', 'woothemes'), $response['response']['message'] ) );
+                                    $this->showError(sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['response']['message'] ));
+				    $order->add_order_note( sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['response']['message'] ) );
 				}
 			
 			}
 			
 		}else{
-                    $this->showError(__('Gateway Error. Please Notify the Store Owner about this error.', 'woothemes'));
-                    $order->add_order_note(__('Gateway Error. Please Notify the Store Owner about this error.', 'woothemes'));
+                    $this->showError(__('Gateway Error. Please Notify the Store Owner about this error.', 'pagofacil'));
+                    $order->add_order_note(__('Gateway Error. Please Notify the Store Owner about this error.', 'pagofacil'));
 		} 	
 		
 	}
@@ -624,17 +610,4 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 
         return $result;
     }
-}
-
-/**
- * Add the gateway to WooCommerce
- **/
-function add_pagofacil_direct_gateway( $methods ) {
-	$methods[] = 'woocommerce_pagofacil_direct'; return $methods;
-}
-
-
-
-add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway' );
-
 }
