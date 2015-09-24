@@ -64,7 +64,11 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 			$this->use_usuario = $this->usuario;
 		}
 
-		add_action( 'woocommerce_thankyou_cod', array( $this, 'thankyou_page' ) );
+		
+		add_action( 'woocommerce_thankyou', array( $this, 'receipt_page' ) , 1);
+		add_action( 'woocommerce_view_order' , array( $this, 'receipt_page' ), 1 );
+		
+		
 		
 		add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
@@ -340,8 +344,10 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 				//$order->update_status('on-hold', __( 'Awaiting cash payment', 'pagofacil' ));
 				//$order->reduce_order_stock();
 				$woocommerce->cart->empty_cart();
+				
+				session_start();
 
-				$this->transaction = $response["charge"];
+				$_SESSION['transaction'] = $response["charge"];
 
 				$order->add_order_note( sprintf( __('Orden generada para pago en %s.', 'pagofacil'), $response["charge"]['convenience_store']) );
 
@@ -365,8 +371,22 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 	}
 
 
-	public function thankyou_page() {
-		echo "ESTA ES UNA PRUEBA DE THANK YOY PAGE";
+	public function receipt_page() {
+		session_start();
+		
+		
+		
+		
+		if( !empty($_SESSION['transaction']) ){
+			
+			
+			include( dirname(__FILE__). '/template/confirm.php' );
+			
+			
+		}else{
+			echo "";	
+		}
+		
 	}
 	
         
