@@ -1,0 +1,327 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pago Facil Direct Gateway for WooCommerce v1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2015-09-07 17:52:02+0000\n"
+"Last-Translator: javolerogmail-com <javolero@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Country: MEXICO\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: gateway-pagofacil-cash.php:17
+#: gateway-pagofacil-cash.php:130
+#@ woocommerce
+#@ pagofacil
+msgid "Pago Facil Cash"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:131
+#@ pagofacil
+msgid "Pago Facil Gateway works AQUI FALTA AJUSTAR"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:156
+#: gateway-pagofacil-direct.php:143
+#@ pagofacil
+msgid "Enable/Disable"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:158
+#@ pagofacil
+msgid "Enable Pago Facil Cash Gateway"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:162
+#: gateway-pagofacil-direct.php:149
+#@ pagofacil
+msgid "Title"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:164
+#: gateway-pagofacil-direct.php:151
+#@ pagofacil
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:165
+#@ pagofacil
+msgid "Cash"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:168
+#: gateway-pagofacil-direct.php:155
+#@ pagofacil
+msgid "Show Description"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:170
+#: gateway-pagofacil-direct.php:157
+#@ pagofacil
+msgid "To Show Description"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:174
+#: gateway-pagofacil-direct.php:161
+#@ pagofacil
+msgid "Description"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:176
+#: gateway-pagofacil-direct.php:163
+#@ pagofacil
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:177
+#@ pagofacil
+msgid "Enter your Cash Details below."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:180
+#@ pagofacil
+msgid "Imagen"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:182
+#@ pagofacil
+msgid "Esta imagen aparecerá durante el checkout. Esto es puramente estetico"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:188
+#: gateway-pagofacil-direct.php:167
+#@ pagofacil
+msgid "Sucursal"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:190
+#: gateway-pagofacil-cash.php:204
+#: gateway-pagofacil-direct.php:169
+#@ pagofacil
+msgid "Please enter your Sucursal; this is needed in order to take payment."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:194
+#: gateway-pagofacil-direct.php:173
+#@ pagofacil
+msgid "Usuario"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:196
+#: gateway-pagofacil-cash.php:210
+#: gateway-pagofacil-direct.php:175
+#@ pagofacil
+msgid "Please enter your Usuario; this is needed in order to take payment."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:202
+#@ pagofacil
+msgid "Sucursal STAGE"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:208
+#@ pagofacil
+msgid "Usuario STAGE"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:216
+#@ woocommerce
+msgid "Notificaciones Automáticas"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:218
+#@ woocommerce
+msgid "Si requiere notificaciones automáticas, agrege esta URL dentro de la sección Webhook del panel de control de pagofacíl"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:223
+#@ pagofacil
+msgid "Accepted Stores"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:225
+#@ pagofacil
+msgid "Select which stores you accept to display the logos for on your checkout page."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:230
+#@ pagofacil
+msgid "Concepto"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:232
+#@ pagofacil
+msgid "Concepto que aparecera en la referencia de las tiendas de conveniencia."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:237
+#@ pagofacil
+msgid "Instructions to pay"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:239
+#@ pagofacil
+msgid "Instrucciones que aparecera en la thank you page."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:240
+#@ pagofacil
+msgid "Las instrucciones para realizar tu pago han sido enviadas a tu correo electrónico."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:244
+#: gateway-pagofacil-direct.php:198
+#@ pagofacil
+msgid "Sandbox"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:246
+#: gateway-pagofacil-direct.php:200
+#@ pagofacil
+msgid "Enable Sandbox"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:270
+#@ pagofacil
+msgid "Tienda de conveniencia:"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:342
+#, php-format
+#@ pagofacil
+msgid "Orden generada para pago en %s."
+msgstr ""
+
+#: gateway-pagofacil-cash.php:352
+#: gateway-pagofacil-cash.php:353
+#: gateway-pagofacil-direct.php:453
+#: gateway-pagofacil-direct.php:462
+#: gateway-pagofacil-direct.php:463
+#, php-format
+#@ pagofacil
+msgid "Transaction Failed. %s"
+msgstr ""
+
+#: gateway-pagofacil-cash.php:357
+#: gateway-pagofacil-cash.php:358
+#: gateway-pagofacil-direct.php:469
+#: gateway-pagofacil-direct.php:470
+#@ pagofacil
+msgid "Gateway Error. Please Notify the Store Owner about this error."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:9
+#: gateway-pagofacil-direct.php:117
+#@ woocommerce
+#@ pagofacil
+msgid "Pago Facil Direct"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:118
+#@ pagofacil
+msgid "Pago Facil Gateway works by charging the customers Credit Card on site."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:145
+#@ pagofacil
+msgid "Enable Pago Facil Gateway"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:152
+#@ pagofacil
+msgid "Credit Card"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:164
+#@ pagofacil
+msgid "Enter your Credit Card Details below."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:179
+#@ pagofacil
+msgid "Enable PagoFacil Notifiaction Emails"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:181
+#@ pagofacil
+msgid "Allow PagoFacil to Send Notification Emails."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:185
+#@ pagofacil
+msgid "Enable Divisa"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:187
+#@ pagofacil
+msgid "Enable sending the Currency Code to Pago Facil via divisa parameter."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:191
+#@ pagofacil
+msgid "Divisa"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:192
+#@ woocommerce
+msgid "This controls what currency that is being sent in divisa parameter to Pago Facil."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:204
+#@ pagofacil
+msgid "Accepted Card Logos"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:206
+#@ pagofacil
+msgid "Select which card types you accept to display the logos for on your checkout page.  This is purely cosmetic and optional, and will have no impact on the cards actually accepted by your account."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:212
+#@ pagofacil
+msgid "Installments"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:213
+#@ pagofacil
+msgid "Enable Installments"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:218
+#: gateway-pagofacil-direct.php:219
+#@ pagofacil
+msgid "Installments Options"
+msgstr ""
+
+#: gateway-pagofacil-direct.php:345
+#@ pagofacil
+msgid "(Credit Card Number) is not valid."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:348
+#@ pagofacil
+msgid "(Card Expire Date) is not valid."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:351
+#@ pagofacil
+msgid "(Card CVV) is not entered."
+msgstr ""
+
+#: gateway-pagofacil-direct.php:440
+#, php-format
+#@ pagofacil
+msgid "Pago Facil %s. The Pago Facil Transaction ID %s and Authorization ID %s."
+msgstr ""
+
