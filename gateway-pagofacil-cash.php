@@ -346,7 +346,9 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 				$woocommerce->cart->empty_cart();
 				
 				session_start();
-
+				
+				
+				$_SESSION['order_id'] = $order_id;
 				$_SESSION['transaction'] = $response["charge"];
 
 				$order->add_order_note( sprintf( __('Orden generada para pago en %s.', 'pagofacil'), $response["charge"]['convenience_store']) );
@@ -371,13 +373,11 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 	}
 
 
-	public function receipt_page() {
+	public function receipt_page( $order_id ) {
 		session_start();
 		
 		
-		
-		
-		if( !empty($_SESSION['transaction']) ){
+		if( !empty($_SESSION['transaction']) && !empty($_SESSION['order_id']) && $_SESSION['order_id'] == $order_id ){
 			
 			
 			include( dirname(__FILE__). '/template/confirm.php' );
