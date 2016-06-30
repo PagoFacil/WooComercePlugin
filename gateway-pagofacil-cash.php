@@ -256,18 +256,22 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 
 
 <?php
-	
-	
+
+
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "http://api.compropago.com/v1/providers/true");
+	curl_setopt($ch, CURLOPT_URL, "https://pagofacil.net/ws/public/index.php/cash/Rest_Conveniencestores");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERPWD, "pk_live_508992456a45414a9");
-	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 	$output = curl_exec($ch);
 	$info = curl_getinfo($ch);
 	curl_close($ch);
-	
-	$store_codes = json_decode($output);
+
+	$response = json_decode($output);
+
+	if ($info['http_code'] != 200 || !is_object($response) || !property_exists($response, 'records')) {
+		$store_codes = array();
+	} else {
+		$store_codes = $response->records;
+	}
 	
 ?>
 		
@@ -279,7 +283,7 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
             <select name="pagofacil_cash_store_code" style="width:210px;">
                 <?php
                     foreach ($store_codes as $option) {
-                    	echo '<option value="'.$option->internal_name.'">'
+                    	echo '<option value="'.$option->code.'">'
                                 .$option->name.
                             '</option>';
                     }
