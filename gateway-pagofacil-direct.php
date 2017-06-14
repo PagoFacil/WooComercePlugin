@@ -59,7 +59,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		
                 
 		if($this->testmode == 'yes'){
-			$this->request_url = 'https://www.pagofacil.net/st/public/Wsrtransaccion/index/format/json/?method=transaccion';
+			$this->request_url = 'https://api.pagofacil.net/Wsrtransaccion/index/format/json/?method=transaccion';
 		}else{
 			$this->request_url = 'https://www.pagofacil.net/ws/public/Wsrtransaccion/index/format/json/?method=transaccion';
 		}
