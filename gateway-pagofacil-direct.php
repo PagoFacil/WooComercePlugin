@@ -59,9 +59,9 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		
                 
 		if($this->testmode == 'yes'){
-			$this->request_url = 'https://stapi.pagofacil.net/Wsrtransaccion/index/format/json/?method=transaccion';
+			$this->request_url = 'https://sandbox.pagofacil.net/Wsrtransaccion/index/format/json/?method=transaccion';
 		}else{
-			$this->request_url = 'https://www.pagofacil.net/ws/public/Wsrtransaccion/index/format/json/?method=transaccion';
+			$this->request_url = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
 		}
 		
 		add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
@@ -466,8 +466,9 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 			}
 			
 		}else{
-                    $this->showError(__('Gateway Error. Please Notify the Store Owner about this error.', 'pagofacil'));
-                    $order->add_order_note(__('Gateway Error. Please Notify the Store Owner about this error.', 'pagofacil'));
+                    $error ="Gateway Error.". $response->get_error_message();
+                    $this->showError(__($error, 'pagofacil'));
+                    $order->add_order_note(__($error, 'pagofacil'));
 		} 	
 		
 	}

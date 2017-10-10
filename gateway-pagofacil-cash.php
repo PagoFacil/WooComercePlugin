@@ -55,11 +55,11 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 		
                 
 		if($this->testmode == 'yes'){
-			$this->request_url = 'https://stapi.pagofacil.net/cash/charge';
+			$this->request_url = 'https://sandbox.pagofacil.net/cash/charge';
 			$this->use_sucursal = $this->sucursal_test;
 			$this->use_usuario = $this->usuario_test;
 		}else{
-			$this->request_url = 'https://www.pagofacil.net/ws/public/cash/charge';
+			$this->request_url = 'https://api.pagofacil.tech/cash/charge';
 			$this->use_sucursal = $this->sucursal;
 			$this->use_usuario = $this->usuario;
 		}
@@ -259,7 +259,7 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 
 
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, "https://pagofacil.net/ws/public/index.php/cash/Rest_Conveniencestores");
+	curl_setopt($ch, CURLOPT_URL, "https://api.pagofacil.tech/cash/Rest_Conveniencestores");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$output = curl_exec($ch);
 	$info = curl_getinfo($ch);
