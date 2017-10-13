@@ -55,7 +55,7 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 		
                 
 		if($this->testmode == 'yes'){
-			$this->request_url = 'https://sandbox.pagofacil.net/cash/charge';
+			$this->request_url = 'https://stcore.pagofacil.net/cash/charge';
 			$this->use_sucursal = $this->sucursal_test;
 			$this->use_usuario = $this->usuario_test;
 		}else{
