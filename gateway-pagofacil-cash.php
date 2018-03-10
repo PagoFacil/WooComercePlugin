@@ -16,7 +16,7 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
         $this->id			= 'pagofacil_cash';
         $this->method_title = __( 'Pago Facil Cash', 'woocommerce' );
 		$this->icon     	= apply_filters( 'woocommerce_pagofacil_cash_icon', '' );
-        $this->has_fields 	= false;
+        $this->has_fields 	= TRUE;
 
 
 
