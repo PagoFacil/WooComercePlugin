@@ -24,12 +24,12 @@ msgstr ""
 #: gateway-pagofacil-cash.php:130
 #@ woocommerce
 #@ pagofacil
-msgid "Pago Facil Cash"
+msgid "PagoFácil Cash"
 msgstr ""
 
 #: gateway-pagofacil-cash.php:131
 #@ pagofacil
-msgid "Pago Facil Gateway works AQUI FALTA AJUSTAR"
+msgid "PagoFácil  Gateway works"
 msgstr ""
 
 #: gateway-pagofacil-cash.php:156
@@ -40,7 +40,7 @@ msgstr ""
 
 #: gateway-pagofacil-cash.php:158
 #@ pagofacil
-msgid "Enable Pago Facil Cash Gateway"
+msgid "Enable PagoFácil Cash Gateway"
 msgstr ""
 
 #: gateway-pagofacil-cash.php:162
@@ -86,7 +86,7 @@ msgstr ""
 
 #: gateway-pagofacil-cash.php:177
 #@ pagofacil
-msgid "Enter your Cash Details below."
+msgid "Introduzca los detalles de pago en efectivo."
 msgstr ""
 
 #: gateway-pagofacil-cash.php:180
@@ -225,17 +225,17 @@ msgstr ""
 #: gateway-pagofacil-direct.php:117
 #@ woocommerce
 #@ pagofacil
-msgid "Pago Facil Direct"
+msgid "PagoFácil Direct"
 msgstr ""
 
 #: gateway-pagofacil-direct.php:118
 #@ pagofacil
-msgid "Pago Facil Gateway works by charging the customers Credit Card on site."
+msgid "PagoFácil Gateway works by charging the customers Credit Card on site."
 msgstr ""
 
 #: gateway-pagofacil-direct.php:145
 #@ pagofacil
-msgid "Enable Pago Facil Gateway"
+msgid "Enable PagoFácil Gateway"
 msgstr ""
 
 #: gateway-pagofacil-direct.php:152
@@ -265,7 +265,7 @@ msgstr ""
 
 #: gateway-pagofacil-direct.php:187
 #@ pagofacil
-msgid "Enable sending the Currency Code to Pago Facil via divisa parameter."
+msgid "Enable sending the Currency Code to PagoFácil via divisa parameter."
 msgstr ""
 
 #: gateway-pagofacil-direct.php:191
@@ -275,7 +275,7 @@ msgstr ""
 
 #: gateway-pagofacil-direct.php:192
 #@ woocommerce
-msgid "This controls what currency that is being sent in divisa parameter to Pago Facil."
+msgid "This controls what currency that is being sent in divisa parameter to PagoFácil."
 msgstr ""
 
 #: gateway-pagofacil-direct.php:204
@@ -322,6 +322,6 @@ msgstr ""
 #: gateway-pagofacil-direct.php:440
 #, php-format
 #@ pagofacil
-msgid "Pago Facil %s. The Pago Facil Transaction ID %s and Authorization ID %s."
+msgid "PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s."
 msgstr ""
 

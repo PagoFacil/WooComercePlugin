@@ -1,12 +1,12 @@
 <?php
 
     /*
-    Plugin Name: Pago Facil Direct Gateway for WooCommerce
-    Plugin URI: http://www.patsatech.com
-    Description: WooCommerce Plugin for accepting payment through Pago Facil Direct Gateway.
-    Author: IRMAcreative / PatSaTech / Javolero
-    Version: 1.1
-    Author URI: http://www.irmacreative.com
+    Plugin Name: PagoFácil Direct Gateway for WooCommerce
+    Plugin URI: https://github.com/PagoFacil/WooComercePlugin
+    Description: WooCommerce Plugin for accepting payment through PagoFácil Direct Gateway.
+    Author: PagoFácil
+    Version: 1.2
+    Author URI: https://pagofacil.net/
     */
 
 

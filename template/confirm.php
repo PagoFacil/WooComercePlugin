@@ -170,10 +170,13 @@
   <div class="cp-title">Seguir los siguientes pasos:</div>
 
   <div class="cp-step-box">
-    <div class="cp-step">
-          <div class="cp-num">1.</div> <span> Ir a la caja <?php echo $_SESSION['transaction']['convenience_store']; ?> de <?php echo $_SESSION['transaction']['store_schedule']; ?> </span><br/> <img src="<?php echo $_SESSION['transaction']['store_image']; ?>" class="cp-image-store" />
-          
-    </div>
+      <div class="cp-step">
+          <?php if($_SESSION['transaction']['convenience_store'] == "SEVEN_ELEVEN"): ?>
+              <div class="cp-num">1.</div> <span>Solicite un Pago a Convenio Banorte No. <?php echo $_SESSION['transaction']['agreement_number']; ?> en una sucursal 7Eleven </span><br/> <img src="<?php echo $_SESSION['transaction']['store_image']; ?>" class="cp-image-store" />
+          <?php else: ?>
+              <div class="cp-num">1.</div> <span> Ir a la caja <?php echo $_SESSION['transaction']['convenience_store']; ?> de <?php echo $_SESSION['transaction']['store_schedule']; ?> </span><br/> <img src="<?php echo $_SESSION['transaction']['store_image']; ?>" class="cp-image-store" />
+          <?php endif; ?>
+      </div>
     <div class="cp-step">
           <div class="cp-num">2.</div> Solicitar depósito a cuenta (debito): <?php echo $_SESSION['transaction']['bank']; ?> - <?php echo $_SESSION['transaction']['bank_account_number']; ?>
     </div>
@@ -196,8 +199,6 @@
 
     </ul>
 </div> 
-
-
 
 
 <div style="clear: both;"></div>
