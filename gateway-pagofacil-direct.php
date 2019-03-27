@@ -1,5 +1,10 @@
 <?php
-
+/*
+@author: PagoFácil
+@plugins_url: https://github.com/PagoFacil/WooComercePlugin
+@version: 1.2
+@edition_by: Johnatan Ayala
+*/
 class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 
 	public function __construct() {
@@ -280,9 +285,13 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		<div class="clear"></div>
 		<p class="form-row" style="width:200px;">
 		    <label>Card CVV <span class="required">*</span></label>
-
 		    <input class="input-text" style="width:100px;" type="text" size="5" maxlength="5" name="pagofacil_direct_cvv" />
 		</p>
+        <div class="clear"></div>
+        <p class="form-row" style="width:200px;">
+            <label>EVT (Elemento de Verificación del Tarjetahabiente)</label>
+            <input class="input-text" style="width:180px;" type="text" size="16" maxlength="16" name="pagofacil_direct_evt" />
+        </p>
 		<div class="clear"></div>
                 <?php
                 // add 10/03/2014
@@ -388,7 +397,10 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
                         'param4'            => urlencode(""),
                         'param5'            => urlencode(""),
                         'ip'                => urlencode($this->getIpBuyer()),
-                        'httpUserAgent'     => urlencode($_SERVER['HTTP_USER_AGENT'])                        
+                        'httpUserAgent'     => urlencode($_SERVER['HTTP_USER_AGENT']),
+                        'EVT'            => urlencode($_POST["pagofacil_direct_evt"]),
+                        'ENC_IP'            => urlencode($this->getIpBuyer()),
+                        'ENC_DIS'            => urlencode("")
                     );
 		
 		if($this->enabledivisa == 'yes'){
@@ -398,8 +410,6 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 		if($this->sendemail != 'yes'){
 			$transaction = array_merge( $transaction, array( 'noMail' => urlencode( '1' ) ) );
 		}
-                                
-                // add 10/03/2014                
                 if ($this->msi == 'yes')
                 {
                     if (trim($_POST["pagofacil_direct_msi"]) != '00')

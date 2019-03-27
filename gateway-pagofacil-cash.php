@@ -1,9 +1,10 @@
 <?php
 
 /*
-Author: Javolero
-Version: 1.1
-Author URI: https://github.com/javolero
+@author: PagoFácil
+@plugins_url: https://github.com/PagoFacil/WooComercePlugin
+@version: 1.2
+@edition_by: Johnatan Ayala
 */
 
 class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
