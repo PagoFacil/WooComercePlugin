@@ -34,6 +34,19 @@ function init_woocommerce_pagofacil_direct() {
 
 	add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway' );
 
+
+    add_filter('woocommerce_endpoint_order-received_title', 'costomise_thank_you_title');
+    function costomise_thank_you_title($original_title)
+    {
+        $order_id = wc_get_order_id_by_order_key($_GET['key']);
+        $order = wc_get_order($order_id);
+
+        $title = $original_title;
+        if ($order->has_status('failed')) {
+            $title = "Transacción denegada";
+        }
+        return $title;
+    }
 }
 
 $plugin_dir = basename( dirname( __FILE__ ) );
