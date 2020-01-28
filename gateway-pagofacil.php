@@ -1,15 +1,13 @@
 <?php
 
     /*
-    Plugin Name: PagoFácil Direct Gateway for WooCommerce
+    Plugin Name: PagoFácil Gateway for WooCommerce
     Plugin URI: https://github.com/PagoFacil/WooComercePlugin
-    Description: WooCommerce Plugin for accepting payment through PagoFácil Direct Gateway.
+    Description: WooCommerce Plugin for accepting payment through PagoFácil gateway.
     Author: PagoFácil
-    Version: 1.2
+    Version: .2
     Author URI: https://pagofacil.net/
     */
-
-
 
 
 add_action('plugins_loaded', 'init_woocommerce_pagofacil_direct', 0);
@@ -22,6 +20,7 @@ function init_woocommerce_pagofacil_direct() {
 
 	include 'gateway-pagofacil-direct.php';
 	include 'gateway-pagofacil-cash.php';
+    include "PagoFacil_Descifrado_Descifrar.php";
 
 	/**
 	 * Add the gateway to WooCommerce
@@ -32,8 +31,6 @@ function init_woocommerce_pagofacil_direct() {
 
 		return $methods;
 	}
-
-
 
 	add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway' );
 
