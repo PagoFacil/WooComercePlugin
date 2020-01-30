@@ -687,36 +687,100 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @return void
      */
     public function pagofacilWebhook(){
-        global $woocommerce;
-        if(isset($_POST['response']) && !empty($_POST['response'])){
-            $cipherKey = $this->get_option( 'cipherKey' );
-            $objPF =  new PagoFacil_Descifrado_Descifrar();
+        try {
+            $this->validateResponse();
+            $cipherKey = $this->get_option('cipherKey');
+            $objPF = new PagoFacil_Descifrado_Descifrar();
             $dataResponse = $objPF->desencriptar_php72($_POST['response'], $cipherKey);
-
             $order = new WC_Order($dataResponse->data->idPedido);
-            if($dataResponse->autorizado == $objPF::AUTORIZADO){
-                $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $dataResponse->pf_message, $dataResponse->transaccion, $dataResponse->autorizacion ) );
-                $order->payment_complete();
-            }
-            elseif ($dataResponse->autorizado == $objPF::RECHAZADO){
-                $order->update_status('failed', $dataResponse->pf_message);
-            }
-            else{
+            $order = $this->proccesingOrder($order, $dataResponse);
+            $url = $this->get_return_url($order);
+            wp_safe_redirect($url);
+        } catch (HttpError $exception) {
+            error_log($exception->getMessage());
+            error_log($exception->getTraceAsString());
+        } catch (PaymentError $exception) {
+            $this->showError($exception->getMessage());
+            $order->add_order_note($exception->getNote());
+            error_log($exception->getMessage());
+            error_log($exception->getTraceAsString());
+            $url = $this->get_return_url($order);
+            wp_safe_redirect($url);
+        } catch (Exception $exception) {
+            error_log($exception->getMessage());
+            error_log($exception->getTraceAsString());
+        }
+    }
+
+    /**
+     * @param WC_Order $order
+     * @return WC_Order
+     */
+    private function completeOrder(WC_Order $order, $dataResponse)
+    {
+        $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $dataResponse->pf_message, $dataResponse->transaccion, $dataResponse->autorizacion ) );
+        $order->payment_complete();
+
+        return $order;
+    }
+
+    /**
+     * @param WC_Order $order
+     * @return WC_Order
+     */
+    private function paymentDeclined(WC_Order $order, $dataResponse)
+    {
+        $order->update_status('failed', $dataResponse->pf_message);
+
+        return $order;
+    }
+
+    /**
+     * @param WC_Order $order
+     * @param $dataResponse
+     * @return WC_Order
+     * @throws
+     */
+    private function proccesingOrder(WC_Order $order, $dataResponse)
+    {
+        switch (true) {
+            case PagoFacil_Descifrado_Descifrar::AUTORIZADO == $dataResponse->autorizado:
+                $order = $this->completeOrder($order, $dataResponse);
+                break;
+            case PagoFacil_Descifrado_Descifrar::RECHAZADO == $dataResponse->autorizado:
+                $order = $this->paymentDeclined($order, $dataResponse);
+                break;
+            default:
                 if(isset($dataResponse->texto)){
                     $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->texto ).'<br>';
                     foreach( $dataResponse->error as $k => $v ){
                         $message .= $v.'<br>';
                     }
-                    $this->showError($message);
-                    $order->add_order_note( $message );
+                    throw new PaymentError($message, $message);
                 }else{
-                    $this->showError(sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->response->message ));
-                    $order->add_order_note( sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->response->message ) );
+                    throw new PaymentError(
+                        sprintf(
+                            __('Transaction Failed. %s', 'pagofacil'),
+                            $dataResponse->response->message
+                        ),
+                        sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->response->message )
+                    );
                 }
+
                 $order->update_status('failed', $dataResponse->pf_message);
-            }
-            $url = $this->get_return_url($order);
-            wp_safe_redirect( $url );
+        }
+
+        return $order;
+    }
+
+    /**
+     * @return void
+     * @throws HttpError
+     */
+    private function validateResponse()
+    {
+        if(!isset($_POST['response']) && empty($_POST['response'])) {
+            throw new HttpError("La petición response POST no exite");
         }
     }
 }
