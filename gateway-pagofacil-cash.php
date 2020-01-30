@@ -1,26 +1,18 @@
 <?php
-
-/*
+/**
 @author: PagoFácil
 @plugins_url: https://github.com/PagoFacil/WooComercePlugin
 @version: 1.2
 */
-class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
-
-    public $transaction = null;
-
-    public function __construct() {
-        global $woocommerce;
-
+class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
+{
+    public function __construct()
+    {
+        parent::__construct();
         $this->id           = 'pagofacil_cash';
         $this->method_title = __( 'PagoFácil Cash', 'woocommerce' );
         $this->icon         = apply_filters( 'woocommerce_pagofacil_cash_icon', '' );
-        $this->has_fields   = TRUE;
-
-        $this->init_form_fields();
-        $this->init_settings();
-        $this->is_description_empty();
-
+        $this->stores_endpoint = "https://api.pagofacil.tech/cash/Rest_Conveniencestores";
         $this->title        = $this->get_option( 'title' );
         $this->description  = $this->get_option( 'description' );
         $this->image    = $this->get_option( 'image' );
@@ -47,16 +39,13 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
         add_action( 'woocommerce_view_order' , array( $this, 'receipt_page' ), 1 );
         add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
-
     }
 
     /**
      * get_icon function.
-     *
-     * @access public
      * @return string
      */
-    function get_icon() {
+    public function get_icon() {
         global $woocommerce;
 
         $icon = '';
@@ -67,15 +56,6 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
         }
 
         return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
-    }
-
-    /**
-     * To Check if Description is Empty
-     */
-    function is_description_empty() {
-        $showdesc = '';
-
-        return($showdesc);
     }
 
     /**
@@ -99,8 +79,8 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
     /**
      * Initialise Gateway Settings Form Fields
      */
-    function init_form_fields() {
-
+    public function init_form_fields()
+    {
         $currency_code_options = get_woocommerce_currencies();
 
         foreach ( $currency_code_options as $code => $name ) {
@@ -195,7 +175,7 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
     /**
      * There are no payment fields for nmi, but we want to show the description if set.
      **/
-    function payment_fields() {
+    public function payment_fields() {
         if ($this->showdesc == 'yes') {
             echo wpautop(wptexturize($this->description));
         }
@@ -204,7 +184,7 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
         }
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.pagofacil.tech/cash/Rest_Conveniencestores");
+        curl_setopt($ch, CURLOPT_URL, $this->stores_endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
         $info = curl_getinfo($ch);
@@ -241,8 +221,11 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
 
     /**
      * Process the payment and return the result
-     **/
-    function process_payment( $order_id ) {
+     *
+     * @param $order_id
+     * @return array
+     */
+    public function process_payment( $order_id ) {
         global $woocommerce;
         $order = new WC_Order( $order_id );
 
@@ -298,8 +281,6 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
         session_start();
         if( !empty($_SESSION['transaction']) && !empty($_SESSION['order_id']) && $_SESSION['order_id'] == $order_id ){
             include( dirname(__FILE__). '/template/confirm.php' );
-        }else{
-            echo "";
         }
     }
 
@@ -313,9 +294,9 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
     private function showError($message) {
         global $woocommerce;
 
-        if (function_exists('wc_add_notice')) { // version >= 2.3
+        if (function_exists('wc_add_notice')) {
             wc_add_notice($message, 'error');
-        } else { // version < 2.3
+        } else {
             $woocommerce->add_error($message);
         }
     }
@@ -330,9 +311,9 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
     private function forceSSL($url) {
         global $woocommerce;
 
-        if (class_exists('WC_HTTPS')) { // version >= 2.3
+        if (class_exists('WC_HTTPS')) {
             return WC_HTTPS::force_https_url($url);
-        } else { // version < 2.3
+        } else {
             return $woocommerce->force_ssl($url);
         }
     }

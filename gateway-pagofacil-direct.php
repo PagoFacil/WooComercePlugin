@@ -4,40 +4,28 @@
 @plugins_url: https://github.com/PagoFacil/WooComercePlugin
 @version: 1.2
 */
-class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
-
-    private $request_url = null;
-    private $idServApi = 3;//20
-    private $idServ3ds = 3;//21
+class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
+    /** @var int $idServ3ds */
+    private $idServ3ds;
+    /** @var string $pf_sandbox_service */
     private $pf_sandbox_service = 'https://sandbox.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
+    /** @var string $pf_sandbox_3ds_service */
     private $pf_sandbox_3ds_service = 'https://sandbox.pagofacil.tech/Woocommerce3ds/Form';
+    /** @var string $pf_production_service */
     private $pf_production_service = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
+    /** @var string $pf_production_3ds_service */
     private $pf_production_3ds_service = 'https://api.pagofacil.tech/Woocommerce3ds/Form';
+    /** @var string $title_radioBtn */
     private $title_radioBtn = 'Credit Card';
 
-    /**
-     * @return string
-     */
-    public function getTitleRadioBtn()
+    public function __construct()
     {
-        return $this->title_radioBtn;
-    }
-
-    /**
-     * @param string $title_radioBtn
-     */
-    public function setTitleRadioBtn($title_radioBtn)
-    {
-        $this->title_radioBtn = $title_radioBtn;
-    }
-
-    public function __construct() {
-        global $woocommerce;
-
+        parent::__construct();
+        $this->idServApi = 3;
+        $this->idServ3ds = 3;
         $this->id			= 'pagofacil_direct';
         $this->method_title = __( 'PagoFácil Direct', 'woocommerce' );
         $this->icon     	= apply_filters( 'woocommerce_pagofacil_direct_icon', '' );
-        $this->has_fields 	= TRUE;
 
         $default_card_type_options = array(
             'VISA' 	=> 'Visa',
@@ -62,16 +50,6 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         );
 
         $this->msi_options = apply_filters('woocommerce_pagofacil_direct_msi_options', $default_msi_options);
-
-        // Load the form fields.
-        $this->init_form_fields();
-
-        // Load the settings.
-        $this->init_settings();
-
-        $this->is_description_empty();
-
-        // Define user set variables
         $this->title		= $this->get_option( 'title' );
         $this->description	= $this->get_option( 'description' );
         $this->sucursal 	= $this->get_option( 'sucursal' );
@@ -80,8 +58,6 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         $this->testmode		= $this->get_option( 'testmode' );
         $this->tdsecure		= $this->get_option( 'tdsecure' );
         $this->sendemail	= $this->get_option( 'sendemail' );
-//		$this->enabledivisa	= $this->get_option( 'enabledivisa' );
-//		$this->divisa		= $this->get_option( 'divisa' );
         $this->cardtypes	= $this->get_option( 'cardtypes' );
         $this->showdesc		= $this->get_option( 'showdesc' );
         $this->msi              = $this->get_option( 'msi' );
@@ -90,17 +66,30 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         $this->request_url = $this->getUrlEnvironment();
 
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
-        //register a webhook here
         add_action( 'woocommerce_api_pagofacil_3ds', array( $this, 'pagofacilWebhook' ) );
     }
 
     /**
-     * get_icon function.
-     *
-     * @access public
      * @return string
      */
-    function get_icon() {
+    public function getTitleRadioBtn()
+    {
+        return $this->title_radioBtn;
+    }
+
+    /**
+     * @param string $title_radioBtn
+     */
+    public function setTitleRadioBtn($title_radioBtn)
+    {
+        $this->title_radioBtn = $title_radioBtn;
+    }
+
+    /**
+     * get_icon function.
+     * @return string
+     */
+    public function get_icon() {
         global $woocommerce;
 
         $icon = '';
@@ -118,16 +107,6 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         }
 
         return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
-    }
-
-    /**
-     * To Check if Description is Empty
-     */
-    function is_description_empty() {
-
-        $showdesc = '';
-
-        return($showdesc);
     }
 
     /**
@@ -153,7 +132,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     /**
      * Initialise Gateway Settings Form Fields
      */
-    function init_form_fields() {
+    public function init_form_fields() {
 
         $currency_code_options = get_woocommerce_currencies();
 
@@ -253,7 +232,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     /**
      * There are no payment fields for nmi, but we want to show the description if set.
      **/
-    function payment_fields() {
+    public function payment_fields() {
         if ($this->showdesc == 'yes') {
             echo wpautop(wptexturize($this->description));
         } else {
@@ -379,7 +358,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     /**
      * Process the payment and return the result
      **/
-    function process_payment( $order_id ) {
+    public function process_payment( $order_id ) {
         if($this->tdsecure == 'yes'){
             return $this->process_payment_3ds($order_id);
         }
@@ -455,7 +434,6 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     /**
      *
      * Envia mesajes de error al checkout segun la version
-     * @author ivelazquex <isai.velazquez@gmail.com>
      * @param $url string
      * @return string
      */
@@ -464,7 +442,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 
         if (class_exists('WC_HTTPS')) {
             return WC_HTTPS::force_https_url($url);
-        } else { // version < 2.3
+        } else {
             return $woocommerce->force_ssl($url);
         }
     }
