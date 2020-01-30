@@ -7,13 +7,6 @@
 class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
     /** @var int $idServ3ds */
     private $idServ3ds;
-    /** @var string $pf_sandbox_service */
-    private $pf_sandbox_service = 'https://sandbox.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
-    /** @var string $pf_sandbox_3ds_service */
-    private $pf_sandbox_3ds_service = 'https://sandbox.pagofacil.tech/Woocommerce3ds/Form';
-    /** @var string $pf_production_service */
-    private $pf_production_service = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
-    /** @var string $pf_production_3ds_service */
     private $pf_production_3ds_service = 'https://api.pagofacil.tech/Woocommerce3ds/Form';
     /** @var string $title_radioBtn */
     private $title_radioBtn = 'Credit Card';
@@ -21,6 +14,10 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
     public function __construct()
     {
         parent::__construct();
+        $this->pf_production_3ds_service = 'https://api.pagofacil.tech/Woocommerce3ds/Form';
+        $this->pf_sandbox_3ds_service = 'https://sandbox.pagofacil.tech/Woocommerce3ds/Form';
+        $this->pf_sandbox_service = 'https://sandbox.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
+        $this->pf_production_service = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
         $this->idServApi = 3;
         $this->idServ3ds = 3;
         $this->id			= 'pagofacil_direct';
@@ -357,96 +354,40 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
 
     /**
      * Process the payment and return the result
-     **/
+     * @param $order_id
+     * @return array
+     */
     public function process_payment( $order_id ) {
+        $order = new WC_Order( $order_id );
+
         if($this->tdsecure == 'yes'){
-            return $this->process_payment_3ds($order_id);
-        }
-        else{
-            return $this->process_payment_without_3ds($order_id);
-        }
-    }
-
-    /**
-     * Obtiene la ip real del comprador
-     * @author ivelazquex <isai.velazquez@gmail.com>
-     * @return string
-     */
-    private function getIpBuyer()
-    {
-        if(isset($_SERVER["HTTP_CLIENT_IP"]))
-        {
-            if (!empty($_SERVER["HTTP_CLIENT_IP"]))
-            {
-                if (strtolower($_SERVER["HTTP_CLIENT_IP"]) != "unknown")
-                {
-                    $ip = $_SERVER["HTTP_CLIENT_IP"];
-                    if (strpos($ip, ",") !== FALSE)
-                    {
-                        $ip = substr($ip, 0, strpos($ip, ","));
-                    }
-                    return  trim($ip);
-                }
+            return $this->process_payment_3ds($order);
+        } else {
+            try {
+                return $this->process_payment_without_3ds($order);
+            } catch (PaymentError $exception) {
+                $this->showError($exception->getMessage());
+                $order->add_order_note($exception->getNote());
+                error_log($exception->getMessage());
+                error_log($exception->getTraceAsString());
+            } catch (HttpError $exception) {
+                $this->showError($exception->getMessage());
+                $order->add_order_note($exception->getNote());
+                error_log($exception->getMessage());
+                error_log($exception->getTraceAsString());
+            } catch (Exception $exception) {
+                $this->showError($exception->getMessage());
+                $order->add_order_note($exception->getNote());
+                error_log($exception->getMessage());
+                error_log($exception->getTraceAsString());
             }
         }
-
-        if(isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
-        {
-            if (!empty($_SERVER["HTTP_X_FORWARDED_FOR"]))
-            {
-                if (strtolower($_SERVER["HTTP_X_FORWARDED_FOR"]) != "unknown")
-                {
-                    $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-                    if (strpos($ip, ",") !== FALSE)
-                    {
-                        $ip = substr($ip, 0, strpos($ip, ","));
-                    }
-                    return  trim($ip);
-                }
-            }
-        }
-
-        $ip = $_SERVER['REMOTE_ADDR'];
-        if (strpos($ip, ",") !== FALSE)
-        {
-            $ip = substr($ip, 0, strpos($ip, ","));
-        }
-        return  trim($ip);
     }
 
     /**
-     *
-     * Envia mesajes de error al checkout segun la version
-     * @author ivelazquex <isai.velazquez@gmail.com>
-     * @param $message string
-     * @return string
+     * @param $toCheck
+     * @return bool
      */
-    private function showError($message) {
-        global $woocommerce;
-
-        if (function_exists('wc_add_notice')) {
-            wc_add_notice($message, 'error');
-        } else {
-            $woocommerce->add_error($message);
-        }
-    }
-
-    /**
-     *
-     * Envia mesajes de error al checkout segun la version
-     * @param $url string
-     * @return string
-     */
-    private function forceSSL($url) {
-        global $woocommerce;
-
-        if (class_exists('WC_HTTPS')) {
-            return WC_HTTPS::force_https_url($url);
-        } else {
-            return $woocommerce->force_ssl($url);
-        }
-    }
-
     private function isCreditCardNumber($toCheck)
     {
         if (!is_numeric($toCheck))
@@ -536,12 +477,11 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param $order_id
      * @return array
      */
-    public function process_payment_3ds( $order_id ) {
-        $order = new WC_Order( $order_id );
+    public function process_payment_3ds(WC_Order $order) {
 
         $dataTransac = array(
             'idServicio' => $this->idServ3ds,
-            "idPedido" => $order_id,
+            "idPedido" => $order->get_id(),
             "nombre" => $order->get_billing_first_name(),
             "apellidos" => $order->get_billing_last_name(),
             "email" => $order->get_billing_email(),
@@ -562,7 +502,6 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
 
         $urlData = _http_build_query($dataTransac, '', '&');
         $urlData = base64_encode($urlData);
-        //Redirect es al servico de pagofacil.net
         $this->request_url .= '?pf_user='.$this->usuario.'&data='.$urlData;
 
         return array(
@@ -577,66 +516,24 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param $order_id
      * @return array
      */
-    public function process_payment_without_3ds( $order_id ) {
-        global $woocommerce;
-
-        $order = new WC_Order( $order_id );
+    public function process_payment_without_3ds(WC_Order $order ) {
         $order->billing_phone = str_replace( array( '( ', '-', ' ', ' )', '.' ), '', $order->billing_phone );
-
-        $transaction = array(
-            'idServicio'        => urlencode($this->idServApi),
-            'idSucursal'        => urlencode($this->sucursal),
-            'idUsuario'         => urlencode($this->usuario),
-            'nombre'            => urlencode($order->billing_first_name),
-            'apellidos'         => urlencode($order->billing_last_name),
-            'numeroTarjeta'     => urlencode($_POST["pagofacil_direct_creditcard"]),
-            'cvt'               => urlencode($_POST["pagofacil_direct_cvv"]),
-            'cp'                => urlencode($order->billing_postcode),
-            'mesExpiracion'     => urlencode($_POST["pagofacil_direct_expdatemonth"]),
-            'anyoExpiracion'    => urlencode($_POST["pagofacil_direct_expdateyear"]),
-            'monto'             => urlencode($order->get_total()),//formato 1000.00
-            'email'             => urlencode($order->billing_email),
-            'telefono'          => urlencode($order->billing_phone), // son 10 digitos
-            'celular'           => urlencode($order->billing_phone), // son 10 digitos
-            'calleyNumero'      => urlencode($order->billing_address_1),
-            'colonia'           => urlencode("N/A"),
-            'municipio'         => urlencode($order->billing_city),
-            'estado'            => urlencode( ($order->billing_state == '' ? "N/A" : $order->billing_state ) ),
-            'pais'              => urlencode($woocommerce->countries->countries[ $order->billing_country ]),
-            'idPedido'          => urlencode($order_id),
-            'param1'            => urlencode(ltrim($order->get_order_number(), '#')),
-            'param2'            => urlencode($order->order_key),
-            'param3'            => urlencode(""),
-            'param4'            => urlencode(""),
-            'param5'            => urlencode(""),
-            'ip'                => urlencode($this->getIpBuyer()),
-            'httpUserAgent'     => urlencode($_SERVER['HTTP_USER_AGENT'])
-        );
+        $transaction = $this->buildTransactionData($order);
 
         if($this->sendemail != 'yes'){
             $transaction = array_merge( $transaction, array( 'noMail' => urlencode( '1' ) ) );
         }
 
-        if ($this->msi == 'yes')
-        {
-            if (trim($_POST["pagofacil_direct_msi"]) != '00')
-            {
-                $transaction = array_merge(
-                    $transaction, array(
-                        'plan' => urlencode('MSI')
-                    ,'mensualidades' => urlencode(trim($_POST["pagofacil_direct_msi"]))
-                    )
-                );
-            }
+        if ($this->msi == 'yes' && (trim($_POST["pagofacil_direct_msi"]) != '00')) {
+            $transaction = array_merge(
+                $transaction, array(
+                    'plan' => urlencode('MSI'),
+                    'mensualidades' => urlencode(trim($_POST["pagofacil_direct_msi"]))
+                )
+            );
         }
-
-        $data='';
-        foreach ($transaction as $key => $value){
-            $data.="&data[$key]=$value";
-        }
-
         $response = wp_remote_post(
-            $this->request_url.$data,
+            $this->request_url.urlencode(http_build_query($transaction)),
             array(
                 'method' => 'POST',
                 'timeout' => 120,
@@ -645,38 +542,20 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
             )
         );
 
-        if (!is_wp_error($response) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) {
-            $response = json_decode($response['body'], true);
-            $response = $response['WebServices_Transacciones']['transaccion'];
+        $this->isWordPressError($response);
+        $response = json_decode($response['body'], true);
+        $response = $response['WebServices_Transacciones']['transaccion'];
 
-            if($response["autorizado"] == "1" && strtolower($response['status']) == 'success') {
-                // Payment completed
-                $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $response["texto"], $response["transaccion"], $response["autorizacion"] ) );
-                $order->payment_complete();
+        if($response["autorizado"] == "1" && strtolower($response['status']) == 'success') {
+            $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $response["texto"], $response["transaccion"], $response["autorizacion"] ) );
+            $order->payment_complete();
 
-                return array(
-                    'result' 	=> 'success',
-                    'redirect'	=>  $this->get_return_url($order)
-                );
-            }
-            else{
-                if(isset($response['texto'])){
-                    $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['texto'] ).'<br>';
-                    foreach( $response['error'] as $k => $v ){
-                        $message .= $v.'<br>';
-                    }
-                    $this->showError($message);
-                    $order->add_order_note( $message );
-                }else{
-                    $this->showError(sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['response']['message'] ));
-                    $order->add_order_note( sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['response']['message'] ) );
-                }
-            }
-
-        }else{
-            $error ="Gateway Error.". $response->get_error_message();
-            $this->showError(__($error, 'pagofacil'));
-            $order->add_order_note(__($error, 'pagofacil'));
+            return array(
+                'result' 	=> 'success',
+                'redirect'	=>  $this->get_return_url($order)
+            );
+        } else {
+            $this->throwResponse($response);
         }
     }
 
@@ -739,7 +618,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param WC_Order $order
      * @param $dataResponse
      * @return WC_Order
-     * @throws
+     * @throws PaymentError
      */
     private function proccesingOrder(WC_Order $order, $dataResponse)
     {
@@ -751,23 +630,8 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
                 $order = $this->paymentDeclined($order, $dataResponse);
                 break;
             default:
-                if(isset($dataResponse->texto)){
-                    $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->texto ).'<br>';
-                    foreach( $dataResponse->error as $k => $v ){
-                        $message .= $v.'<br>';
-                    }
-                    throw new PaymentError($message, $message);
-                }else{
-                    throw new PaymentError(
-                        sprintf(
-                            __('Transaction Failed. %s', 'pagofacil'),
-                            $dataResponse->response->message
-                        ),
-                        sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->response->message )
-                    );
-                }
-
                 $order->update_status('failed', $dataResponse->pf_message);
+                $this->throwResponse($dataResponse);
         }
 
         return $order;
@@ -783,4 +647,38 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
             throw new HttpError("La petición response POST no exite");
         }
     }
+
+    private function buildTransactionData(WC_Order $order )
+    {
+        return array(
+            'idServicio'        => urlencode($this->idServApi),
+            'idSucursal'        => urlencode($this->sucursal),
+            'idUsuario'         => urlencode($this->usuario),
+            'nombre'            => urlencode($order->billing_first_name),
+            'apellidos'         => urlencode($order->billing_last_name),
+            'numeroTarjeta'     => urlencode($_POST["pagofacil_direct_creditcard"]),
+            'cvt'               => urlencode($_POST["pagofacil_direct_cvv"]),
+            'cp'                => urlencode($order->billing_postcode),
+            'mesExpiracion'     => urlencode($_POST["pagofacil_direct_expdatemonth"]),
+            'anyoExpiracion'    => urlencode($_POST["pagofacil_direct_expdateyear"]),
+            'monto'             => urlencode($order->get_total()),
+            'email'             => urlencode($order->billing_email),
+            'telefono'          => urlencode($order->billing_phone),
+            'celular'           => urlencode($order->billing_phone),
+            'calleyNumero'      => urlencode($order->billing_address_1),
+            'colonia'           => urlencode("N/A"),
+            'municipio'         => urlencode($order->billing_city),
+            'estado'            => urlencode( ($order->billing_state == '' ? "N/A" : $order->billing_state ) ),
+            'pais'              => urlencode($this->woocommerce->countries->countries[ $order->billing_country ]),
+            'idPedido'          => urlencode($order->get_id()),
+            'param1'            => urlencode(ltrim($order->get_order_number(), '#')),
+            'param2'            => urlencode($order->order_key),
+            'param3'            => urlencode(""),
+            'param4'            => urlencode(""),
+            'param5'            => urlencode(""),
+            'ip'                => urlencode($this->getIpBuyer()),
+            'httpUserAgent'     => urlencode($_SERVER['HTTP_USER_AGENT'])
+        );
+    }
+
 }

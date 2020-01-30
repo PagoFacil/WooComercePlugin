@@ -42,10 +42,22 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
     protected $request_url;
     /** @var int $idServApi */
     protected $idServApi;
+    /** @var string $msi */
+    protected $msi;
+    /** @var string $pf_sandbox_service */
+    protected $pf_sandbox_service;
+    /** @var string $pf_sandbox_3ds_service */
+    protected $pf_sandbox_3ds_service;
+    /** @var string $pf_production_service */
+    protected $pf_production_service;
+    /** @var string $pf_production_3ds_service */
+    private $pf_production_3ds_service;
+    protected $woocommerce;
 
     public function __construct()
     {
         global $woocommerce;
+        $this->woocommerce = $woocommerce;
         $this->has_fields   = TRUE;
         $this->init_form_fields();
         $this->init_settings();
@@ -56,5 +68,131 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
     abstract public function process_payment($order_id);
     public function is_description_empty(){
         $this->showdesc = "";
+    }
+
+    private function __destruct()
+    {
+        $_POST = [];
+    }
+
+    /**
+     * @param $response
+     * @throws PaymentError
+     */
+    protected function throwResponse($response)
+    {
+        if(isset($response['texto'])){
+            $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['texto'] ).'<br>';
+            foreach( $response['error'] as $k => $v ){
+                $message .= $v.'<br>';
+            }
+            throw new PaymentError($message, $message);
+        }else{
+            throw new PaymentError(
+                sprintf(
+                    __('Transaction Failed. %s', 'pagofacil'),
+                    $response['response']['message']
+                ),
+                sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['response']['message'])
+            );
+        }
+    }
+
+    /**
+     * @param $response
+     */
+    protected function isWordPressError($response)
+    {
+        if (is_wp_error($response) && $response['response']['code'] <= 200 && $response['response']['code'] > 300 ) {
+            throw new HttpError("Gateway Error.". $response->get_error_message());
+        }
+    }
+
+    /**
+     * Envía mesajes de error al checkout según la versión
+     * @param $message
+     */
+    protected function showError($message)
+    {
+
+        if (function_exists('wc_add_notice')) {
+            wc_add_notice($message, 'error');
+        } else {
+            $this->woocommerce->add_error($message);
+        }
+    }
+
+    /**
+     *
+     * Envia mesajes de error al checkout segun la version
+     * @param $url string
+     * @return string
+     */
+    protected function forceSSL($url) {
+        if (class_exists('WC_HTTPS')) {
+            return WC_HTTPS::force_https_url($url);
+        } else {
+            return $this->woocommerce->force_ssl($url);
+        }
+    }
+
+    /**
+     * Se define la URL/endpoint a utilizar para realizar las transacciones
+     * @return string
+     */
+    private function getUrlEnvironment()
+    {
+        $url = $this->pf_production_service;
+        if($this->tdsecure == 'yes'){
+            $url = $this->pf_production_3ds_service;
+            $this->setTitleRadioBtn('Credit Card-3DS');
+        }
+
+        if($this->testmode == 'yes'){
+            $url = $this->pf_sandbox_service;
+            if($this->tdsecure == 'yes'){
+                $url = $this->pf_sandbox_3ds_service;
+            }
+        }
+        return $url;
+    }
+
+    /**
+     * Obtiene la ip real del comprador
+     * @return string
+     */
+    protected function getIpBuyer()
+    {
+        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+
+        if(isset($_SERVER["HTTP_CLIENT_IP"])
+            && (!empty($_SERVER["HTTP_CLIENT_IP"]))
+            && (strtolower($_SERVER["HTTP_CLIENT_IP"]) != "unknown")
+        ) {
+            $ip = $_SERVER["HTTP_CLIENT_IP"];
+            if (strpos($ip, ",") !== FALSE)
+            {
+                $ip = substr($ip, 0, strpos($ip, ","));
+            }
+            return  trim($ip);
+        }
+
+        if(
+            isset($_SERVER["HTTP_X_FORWARDED_FOR"])
+            && (!empty($_SERVER["HTTP_X_FORWARDED_FOR"]))
+            && (strtolower($_SERVER["HTTP_X_FORWARDED_FOR"]) != "unknown")
+        ) {
+            if (strpos($ip, ",") !== FALSE)
+            {
+                $ip = substr($ip, 0, strpos($ip, ","));
+            }
+            return  trim($ip);
+        }
+
+        if (strpos($ip, ",") !== FALSE)
+        {
+            $ip = substr($ip, 0, strpos($ip, ","));
+        }
+        return  trim($ip);
     }
 }
