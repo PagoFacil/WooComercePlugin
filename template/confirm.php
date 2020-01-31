@@ -170,9 +170,9 @@
 
     <div class="cp-step-box">
         <div class="cp-step">
-            <?php if($_SESSION['transaction']['convenience_store'] == "SEVEN_ELEVEN"): ?>
+            <?php if ($_SESSION['transaction']['convenience_store'] == "SEVEN_ELEVEN") : ?>
                 <div class="cp-num">1.</div> <span>Solicite un Pago a Convenio Banorte No. <?php echo $_SESSION['transaction']['agreement_number']; ?> en una sucursal 7Eleven </span><br/> <img src="<?php echo $_SESSION['transaction']['store_image']; ?>" class="cp-image-store" />
-            <?php else: ?>
+            <?php else : ?>
                 <div class="cp-num">1.</div> <span> Ir a la caja <?php echo $_SESSION['transaction']['convenience_store']; ?> de <?php echo $_SESSION['transaction']['store_schedule']; ?> </span><br/> <img src="<?php echo $_SESSION['transaction']['store_image']; ?>" class="cp-image-store" />
             <?php endif; ?>
         </div>

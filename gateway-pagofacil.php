@@ -9,8 +9,9 @@
 
 add_action('plugins_loaded', 'init_woocommerce_pagofacil_direct', 0);
 
-function init_woocommerce_pagofacil_direct() {
-    if ( ! class_exists( 'Woocommerce' ) ) {
+function init_woocommerce_pagofacil_direct()
+{
+    if (! class_exists('Woocommerce')) {
         return;
     }
 
@@ -28,16 +29,16 @@ function init_woocommerce_pagofacil_direct() {
      * @param array $methods
      * @return array
      */
-    function add_pagofacil_direct_gateway( $methods ) {
+    function add_pagofacil_direct_gateway($methods)
+    {
         $methods[] = 'woocommerce_pagofacil_direct';
         $methods[] = 'woocommerce_pagofacil_cash';
 
         return $methods;
     }
 
-    add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway' );
-
+    add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway');
 }
 
-$plugin_dir = basename( dirname( __FILE__ ) );
-load_plugin_textdomain( 'pagofacil', null, $plugin_dir );
+$plugin_dir = basename(dirname(__FILE__));
+load_plugin_textdomain('pagofacil', null, $plugin_dir);

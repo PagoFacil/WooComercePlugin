@@ -14,7 +14,8 @@ class PagoFacil_Descifrado_Descifrar
 
     protected $_method;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->_method = 'AES-128-CBC';
     }
 
@@ -22,8 +23,7 @@ class PagoFacil_Descifrado_Descifrar
     {
         $encodedInitialData =  base64_decode($encodedInitialData);
         $cypher = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
-        if (mcrypt_generic_init($cypher, $key, $key) != -1)
-        {
+        if (mcrypt_generic_init($cypher, $key, $key) != -1) {
             $decrypted = mdecrypt_generic($cypher, $encodedInitialData);
             mcrypt_generic_deinit($cypher);
             mcrypt_module_close($cypher);
@@ -38,7 +38,8 @@ class PagoFacil_Descifrado_Descifrar
      * @param type $encodedInitialData Cadena encriptada que regresa la API
      * @param type $key Llave de cifrado proporcionada por PagoFácil
      */
-    function desencriptar_php72($encodedInitialData, $key) {
+    function desencriptar_php72($encodedInitialData, $key)
+    {
         $auth = false;
         $data = base64_decode($encodedInitialData, true);
         try {
@@ -49,7 +50,7 @@ class PagoFacil_Descifrado_Descifrar
 
             $decrypted = preg_replace('/^(",")/', '"', self::pkcs5_unpad($decrypted));
 
-            if(stripos($decrypted, 'Transaccion exitosa')) {
+            if (stripos($decrypted, 'Transaccion exitosa')) {
                 $auth = true;
             }
             $decryptedArray = json_decode('{'.$decrypted);
@@ -73,7 +74,7 @@ class PagoFacil_Descifrado_Descifrar
         $pos = 0;
         $result = '';
         while ($pos < strlen($hex_string)) {
-            if (strpos(" \t\n\r", $hex_string{$pos}) !== FALSE) {
+            if (strpos(" \t\n\r", $hex_string{$pos}) !== false) {
                 $pos++;
             } else {
                 $code = hexdec(substr($hex_string, $pos, 2));
@@ -87,14 +88,17 @@ class PagoFacil_Descifrado_Descifrar
     private static function pkcs5_unpad($text)
     {
         $pad = ord($text{strlen($text) - 1});
-        if ($pad > strlen($text))
+        if ($pad > strlen($text)) {
             return false;
-        if (strspn($text, chr($pad), strlen($text) - $pad) != $pad)
+        }
+        if (strspn($text, chr($pad), strlen($text) - $pad) != $pad) {
             return false;
+        }
         return substr($text, 0, -1 * $pad);
     }
 
-    public function getMethod() {
+    public function getMethod()
+    {
         return $this->_method;
     }
 }

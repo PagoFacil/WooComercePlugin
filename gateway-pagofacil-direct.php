@@ -4,7 +4,8 @@
 @plugins_url: https://github.com/PagoFacil/WooComercePlugin
 @version: 1.2
 */
-class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
+class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
+{
     /** @var int $idServ3ds */
     private $idServ3ds;
     private $pf_production_3ds_service = 'https://api.pagofacil.tech/Woocommerce3ds/Form';
@@ -20,19 +21,20 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
         $this->pf_production_service = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
         $this->idServApi = 3;
         $this->idServ3ds = 3;
-        $this->id			= 'pagofacil_direct';
-        $this->method_title = __( 'PagoFácil Direct', 'woocommerce' );
-        $this->icon     	= apply_filters( 'woocommerce_pagofacil_direct_icon', '' );
+        $this->id           = 'pagofacil_direct';
+        $this->method_title = __('PagoFácil Direct', 'woocommerce');
+        $this->icon         = apply_filters('woocommerce_pagofacil_direct_icon', '');
 
         $default_card_type_options = array(
-            'VISA' 	=> 'Visa',
-            'MC'   	=> 'MasterCard',
-            'AMEX' 	=> 'American Express',
-            'DISC' 	=> 'Discover',
-            'JCB'	=> 'JCB',
+            'VISA'  => 'Visa',
+            'MC'    => 'MasterCard',
+            'AMEX'  => 'American Express',
+            'DISC'  => 'Discover',
+            'JCB'   => 'JCB',
             'DIN'=> 'DINERS'
         );
-        $this->card_type_options = apply_filters( 'woocommerce_pagofacil_direct_card_types', $default_card_type_options );
+
+        $this->card_type_options = apply_filters('woocommerce_pagofacil_direct_card_types', $default_card_type_options);
 
         $default_msi_options = array(
             'all' => 'All Options',
@@ -47,23 +49,23 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
         );
 
         $this->msi_options = apply_filters('woocommerce_pagofacil_direct_msi_options', $default_msi_options);
-        $this->title		= $this->get_option( 'title' );
-        $this->description	= $this->get_option( 'description' );
-        $this->sucursal 	= $this->get_option( 'sucursal' );
-        $this->usuario		= $this->get_option( 'usuario' );
-        $this->cipherKey	= $this->get_option( 'cipherKey' );
-        $this->testmode		= $this->get_option( 'testmode' );
-        $this->tdsecure		= $this->get_option( 'tdsecure' );
-        $this->sendemail	= $this->get_option( 'sendemail' );
-        $this->cardtypes	= $this->get_option( 'cardtypes' );
-        $this->showdesc		= $this->get_option( 'showdesc' );
-        $this->msi              = $this->get_option( 'msi' );
+        $this->title        = $this->get_option('title');
+        $this->description  = $this->get_option('description');
+        $this->sucursal     = $this->get_option('sucursal');
+        $this->usuario      = $this->get_option('usuario');
+        $this->cipherKey    = $this->get_option('cipherKey');
+        $this->testmode     = $this->get_option('testmode');
+        $this->tdsecure     = $this->get_option('tdsecure');
+        $this->sendemail    = $this->get_option('sendemail');
+        $this->cardtypes    = $this->get_option('cardtypes');
+        $this->showdesc     = $this->get_option('showdesc');
+        $this->msi              = $this->get_option('msi');
         $this->msioptions       = $this->get_option('msioptions');
 
         $this->request_url = $this->getUrlEnvironment();
 
-        add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
-        add_action( 'woocommerce_api_pagofacil_3ds', array( $this, 'pagofacilWebhook' ) );
+        add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ));
+        add_action('woocommerce_api_pagofacil_3ds', array( $this, 'pagofacilWebhook' ));
     }
 
     /**
@@ -86,24 +88,23 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * get_icon function.
      * @return string
      */
-    public function get_icon() {
-        global $woocommerce;
-
+    public function get_icon()
+    {
         $icon = '';
-        if ( $this->icon ) {
+        if ($this->icon) {
             // default behavior
-            $icon = '<img src="' . $this->forceSSL( $this->icon ) . '" alt="' . $this->title . '" />';
-        } elseif ( $this->cardtypes ) {
+            $icon = '<img src="' . $this->forceSSL($this->icon) . '" alt="' . $this->title . '" />';
+        } elseif ($this->cardtypes) {
             // display icons for the selected card types
             $icon = '';
-            foreach ( $this->cardtypes as $cardtype ) {
-                if ( file_exists( plugin_dir_path( __FILE__ ) . '/images/card-' . strtolower( $cardtype ) . '.png' ) ) {
-                    $icon .= '<img src="' . $this->forceSSL( plugins_url( '/images/card-' . strtolower( $cardtype ) . '.png', __FILE__ ) ) . '" alt="' . strtolower( $cardtype ) . '" />';
+            foreach ($this->cardtypes as $cardtype) {
+                if (file_exists(plugin_dir_path(__FILE__) . '/images/card-' . strtolower($cardtype) . '.png')) {
+                    $icon .= '<img src="' . $this->forceSSL(plugins_url('/images/card-' . strtolower($cardtype) . '.png', __FILE__)) . '" alt="' . strtolower($cardtype) . '" />';
                 }
             }
         }
 
-        return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
+        return apply_filters('woocommerce_gateway_icon', $icon, $this->id);
     }
 
     /**
@@ -112,7 +113,8 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      *
      * @since 1.0.0
      */
-    public function admin_options() {
+    public function admin_options()
+    {
 
         ?>
         <h3><?php _e('PagoFácil Direct', 'pagofacil'); ?></h3>
@@ -129,89 +131,90 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
     /**
      * Initialise Gateway Settings Form Fields
      */
-    public function init_form_fields() {
+    public function init_form_fields()
+    {
 
         $currency_code_options = get_woocommerce_currencies();
 
         unset($currency_code_options['MXN']);
 
-        foreach ( $currency_code_options as $code => $name ) {
-            $currency_code_options[ $code ] = $name . ' (' . get_woocommerce_currency_symbol( $code ) . ')';
+        foreach ($currency_code_options as $code => $name) {
+            $currency_code_options[ $code ] = $name . ' (' . get_woocommerce_currency_symbol($code) . ')';
         }
 
         $this->form_fields = array(
             'enabled' => array(
-                'title' => __( 'Enable/Disable', 'pagofacil' ),
+                'title' => __('Enable/Disable', 'pagofacil'),
                 'type' => 'checkbox',
-                'label' => __( 'Enable PagoFácil Gateway', 'pagofacil' ),
+                'label' => __('Enable PagoFácil Gateway', 'pagofacil'),
                 'default' => 'yes'
             ),
             'testmode' => array(
-                'title' => __( 'Sandbox', 'pagofacil' ),
+                'title' => __('Sandbox', 'pagofacil'),
                 'type' => 'checkbox',
-                'label' => __( 'Enable Sandbox', 'pagofacil' ),
+                'label' => __('Enable Sandbox', 'pagofacil'),
                 'default' => 'no'
             ),
             'tdsecure' => array(
-                'title' => __( '3DS', 'pagofacil' ),
+                'title' => __('3DS', 'pagofacil'),
                 'type' => 'checkbox',
-                'label' => __( 'Enable all transactions via 3DS', 'pagofacil' ),
+                'label' => __('Enable all transactions via 3DS', 'pagofacil'),
                 'default' => 'no',
-                'description' => __( 'All transaction will be processing by 3D Secure.', 'pagofacil' ),
+                'description' => __('All transaction will be processing by 3D Secure.', 'pagofacil'),
                 'desc_tip'    => true
             ),
             'title' => array(
-                'title' => __( 'Title', 'pagofacil' ),
+                'title' => __('Title', 'pagofacil'),
                 'type' => 'text',
-                'description' => __( 'This controls the title which the user sees during checkout.', 'pagofacil' ),
-                'default' => __( $this->getTitleRadioBtn(), 'pagofacil' )
+                'description' => __('This controls the title which the user sees during checkout.', 'pagofacil'),
+                'default' => __($this->getTitleRadioBtn(), 'pagofacil')
             ),
             'showdesc' => array(
-                'title' => __( 'Show Description', 'pagofacil' ),
+                'title' => __('Show Description', 'pagofacil'),
                 'type' => 'checkbox',
-                'label' => __( 'To Show Description', 'pagofacil' ),
+                'label' => __('To Show Description', 'pagofacil'),
                 'default' => 'no'
             ),
             'description' => array(
-                'title' => __( 'Description', 'pagofacil' ),
+                'title' => __('Description', 'pagofacil'),
                 'type' => 'textarea',
-                'description' => __( 'This controls the description which the user sees during checkout.', 'pagofacil' ),
+                'description' => __('This controls the description which the user sees during checkout.', 'pagofacil'),
                 'default' => __("Enter your Credit Card Details below.", 'pagofacil')
             ),
             'sucursal' => array(
-                'title' => __( 'Sucursal', 'pagofacil' ),
+                'title' => __('Sucursal', 'pagofacil'),
                 'type' => 'text',
-                'description' => __( 'Please enter your Sucursal; this is needed in order to take payment.', 'pagofacil' ),
+                'description' => __('Please enter your Sucursal; this is needed in order to take payment.', 'pagofacil'),
                 'default' => ''
             ),
             'usuario' => array(
-                'title' => __( 'Usuario', 'pagofacil' ),
+                'title' => __('Usuario', 'pagofacil'),
                 'type' => 'text',
-                'description' => __( 'Please enter your Usuario; this is needed in order to take payment.', 'pagofacil' ),
+                'description' => __('Please enter your Usuario; this is needed in order to take payment.', 'pagofacil'),
                 'default' => ''
             ),
             'cipherKey' => array(
-                'title' => __( 'Cipher key', 'pagofacil' ),
+                'title' => __('Cipher key', 'pagofacil'),
                 'type' => 'text',
-                'description' => __( 'Please enter your cipher key; this is needed just only if you use 3DS to take payment.', 'pagofacil' ),
+                'description' => __('Please enter your cipher key; this is needed just only if you use 3DS to take payment.', 'pagofacil'),
                 'default' => ''
             ),
             'sendemail' => array(
-                'title' => __( 'Enable PagoFacil Notifiaction Emails', 'pagofacil' ),
+                'title' => __('Enable PagoFacil Notifiaction Emails', 'pagofacil'),
                 'type' => 'checkbox',
-                'label' => __( 'Allow PagoFacil to Send Notification Emails.', 'pagofacil' ),
+                'label' => __('Allow PagoFacil to Send Notification Emails.', 'pagofacil'),
                 'default' => 'no'
             ),
-            'cardtypes'	=> array(
-                'title' => __( 'Accepted Card Logos', 'pagofacil' ),
+            'cardtypes' => array(
+                'title' => __('Accepted Card Logos', 'pagofacil'),
                 'type' => 'multiselect',
-                'description' => __( 'Select which card types you accept to display the logos for on your checkout page.  This is purely cosmetic and optional, and will have no impact on the cards actually accepted by your account.', 'pagofacil' ),
+                'description' => __('Select which card types you accept to display the logos for on your checkout page.  This is purely cosmetic and optional, and will have no impact on the cards actually accepted by your account.', 'pagofacil'),
                 'default' => '',
                 'options' => $this->card_type_options,
             )
         ,'msi' => array(
                 'title' => __('Installments', 'pagofacil')
-            ,'label' => __( 'Enable Installments', 'pagofacil' )
+            ,'label' => __('Enable Installments', 'pagofacil')
             ,'type' => 'checkbox'
             ,'default' => 'no'
             ),
@@ -223,19 +226,19 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
                 'options' => $this->msi_options,
             ),
         );
-
     }
 
     /**
      * There are no payment fields for nmi, but we want to show the description if set.
      **/
-    public function payment_fields() {
+    public function payment_fields()
+    {
         if ($this->showdesc == 'yes') {
             echo wpautop(wptexturize($this->description));
         } else {
             $this->is_description_empty();
         }
-        if($this->tdsecure != 'yes') {
+        if ($this->tdsecure != 'yes') {
             ?>
             <p class="form-row" style="width:200px;">
                 <label>Card Number <span class="required">*</span></label>
@@ -338,17 +341,20 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
 
     public function validate_fields()
     {
-        if($this->tdsecure != 'yes') {
+        if ($this->tdsecure != 'yes') {
             global $woocommerce;
 
-            if (!$this->isCreditCardNumber($_POST['pagofacil_direct_creditcard']))
+            if (!$this->isCreditCardNumber($_POST['pagofacil_direct_creditcard'])) {
                 $this->showError(__('(Credit Card Number) is not valid.', 'pagofacil'));
+            }
 
-            if (!$this->isCorrectExpireDate($_POST['pagofacil_direct_expdatemonth'], $_POST['pagofacil_direct_expdateyear']))
+            if (!$this->isCorrectExpireDate($_POST['pagofacil_direct_expdatemonth'], $_POST['pagofacil_direct_expdateyear'])) {
                 $this->showError(__('(Card Expire Date) is not valid.', 'pagofacil'));
+            }
 
-            if (!$_POST['pagofacil_direct_cvv'])
+            if (!$_POST['pagofacil_direct_cvv']) {
                 $this->showError(__('(Card CVV) is not entered.', 'pagofacil'));
+            }
         }
     }
 
@@ -357,10 +363,11 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param $order_id
      * @return array
      */
-    public function process_payment( $order_id ) {
-        $order = new WC_Order( $order_id );
+    public function process_payment($order_id)
+    {
+        $order = new WC_Order($order_id);
 
-        if($this->tdsecure == 'yes'){
+        if ($this->tdsecure == 'yes') {
             return $this->process_payment_3ds($order);
         } else {
             try {
@@ -390,36 +397,34 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      */
     private function isCreditCardNumber($toCheck)
     {
-        if (!is_numeric($toCheck))
+        if (!is_numeric($toCheck)) {
             return false;
+        }
 
         $number = preg_replace('/[^0-9]+/', '', $toCheck);
         $strlen = strlen($number);
         $sum    = 0;
 
-        if ($strlen < 13)
+        if ($strlen < 13) {
             return false;
+        }
 
-        for ($i=0; $i < $strlen; $i++)
-        {
+        for ($i=0; $i < $strlen; $i++) {
             $digit = substr($number, $strlen - $i - 1, 1);
-            if($i % 2 == 1)
-            {
+            if ($i % 2 == 1) {
                 $sub_total = $digit * 2;
-                if($sub_total > 9)
-                {
+                if ($sub_total > 9) {
                     $sub_total = 1 + ($sub_total - 10);
                 }
-            }
-            else
-            {
+            } else {
                 $sub_total = $digit;
             }
             $sum += $sub_total;
         }
 
-        if ($sum > 0 AND $sum % 10 == 0)
+        if ($sum > 0 and $sum % 10 == 0) {
             return true;
+        }
 
         return false;
     }
@@ -431,14 +436,10 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
         $thisYear  = (int)date('y', $now);
         $thisMonth = (int)date('m', $now);
 
-        if (is_numeric($year) && is_numeric($month))
-        {
-            if($thisYear == (int)$year)
-            {
+        if (is_numeric($year) && is_numeric($month)) {
+            if ($thisYear == (int)$year) {
                 $result = (int)$month >= $thisMonth;
-            }
-            else if($thisYear < (int)$year)
-            {
+            } elseif ($thisYear < (int)$year) {
                 $result = true;
             }
         }
@@ -453,16 +454,15 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      */
     private function getUrlEnvironment()
     {
-        if($this->testmode == 'yes'){
+        if ($this->testmode == 'yes') {
             $url = $this->pf_sandbox_service;
-            if($this->tdsecure == 'yes'){
+            if ($this->tdsecure == 'yes') {
                 $url = $this->pf_sandbox_3ds_service;
                 $this->setTitleRadioBtn('Credit Card-3DS');
             }
-        }
-        else{
+        } else {
             $url = $this->pf_production_service;
-            if($this->tdsecure == 'yes'){
+            if ($this->tdsecure == 'yes') {
                 $url = $this->pf_production_3ds_service;
                 $this->setTitleRadioBtn('Credit Card-3DS');
             }
@@ -477,7 +477,8 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param $order_id
      * @return array
      */
-    public function process_payment_3ds(WC_Order $order) {
+    public function process_payment_3ds(WC_Order $order)
+    {
 
         $dataTransac = array(
             'idServicio' => $this->idServ3ds,
@@ -516,17 +517,19 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param $order_id
      * @return array
      */
-    public function process_payment_without_3ds(WC_Order $order ) {
-        $order->billing_phone = str_replace( array( '( ', '-', ' ', ' )', '.' ), '', $order->billing_phone );
+    public function process_payment_without_3ds(WC_Order $order)
+    {
+        $order->billing_phone = str_replace(array( '( ', '-', ' ', ' )', '.' ), '', $order->billing_phone);
         $transaction = $this->buildTransactionData($order);
 
-        if($this->sendemail != 'yes'){
-            $transaction = array_merge( $transaction, array( 'noMail' => urlencode( '1' ) ) );
+        if ($this->sendemail != 'yes') {
+            $transaction = array_merge($transaction, array( 'noMail' => urlencode('1') ));
         }
 
         if ($this->msi == 'yes' && (trim($_POST["pagofacil_direct_msi"]) != '00')) {
             $transaction = array_merge(
-                $transaction, array(
+                $transaction,
+                array(
                     'plan' => urlencode('MSI'),
                     'mensualidades' => urlencode(trim($_POST["pagofacil_direct_msi"]))
                 )
@@ -546,13 +549,13 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
         $response = json_decode($response['body'], true);
         $response = $response['WebServices_Transacciones']['transaccion'];
 
-        if($response["autorizado"] == "1" && strtolower($response['status']) == 'success') {
-            $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $response["texto"], $response["transaccion"], $response["autorizacion"] ) );
+        if ($response["autorizado"] == "1" && strtolower($response['status']) == 'success') {
+            $order->add_order_note(sprintf(__('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $response["texto"], $response["transaccion"], $response["autorizacion"]));
             $order->payment_complete();
 
             return array(
-                'result' 	=> 'success',
-                'redirect'	=>  $this->get_return_url($order)
+                'result'    => 'success',
+                'redirect'  =>  $this->get_return_url($order)
             );
         } else {
             $this->throwResponse($response);
@@ -565,7 +568,8 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      * @param $_POST
      * @return void
      */
-    public function pagofacilWebhook(){
+    public function pagofacilWebhook()
+    {
         try {
             $this->validateResponse();
             $cipherKey = $this->get_option('cipherKey');
@@ -597,7 +601,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      */
     private function completeOrder(WC_Order $order, $dataResponse)
     {
-        $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $dataResponse->pf_message, $dataResponse->transaccion, $dataResponse->autorizacion ) );
+        $order->add_order_note(sprintf(__('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $dataResponse->pf_message, $dataResponse->transaccion, $dataResponse->autorizacion));
         $order->payment_complete();
 
         return $order;
@@ -643,12 +647,12 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
      */
     private function validateResponse()
     {
-        if(!isset($_POST['response']) && empty($_POST['response'])) {
+        if (!isset($_POST['response']) && empty($_POST['response'])) {
             throw new HttpError("La petición response POST no exite");
         }
     }
 
-    private function buildTransactionData(WC_Order $order )
+    private function buildTransactionData(WC_Order $order)
     {
         return array(
             'idServicio'        => urlencode($this->idServApi),
@@ -668,7 +672,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
             'calleyNumero'      => urlencode($order->billing_address_1),
             'colonia'           => urlencode("N/A"),
             'municipio'         => urlencode($order->billing_city),
-            'estado'            => urlencode( ($order->billing_state == '' ? "N/A" : $order->billing_state ) ),
+            'estado'            => urlencode(($order->billing_state == '' ? "N/A" : $order->billing_state )),
             'pais'              => urlencode($this->woocommerce->countries->countries[ $order->billing_country ]),
             'idPedido'          => urlencode($order->get_id()),
             'param1'            => urlencode(ltrim($order->get_order_number(), '#')),
@@ -680,5 +684,4 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway {
             'httpUserAgent'     => urlencode($_SERVER['HTTP_USER_AGENT'])
         );
     }
-
 }
