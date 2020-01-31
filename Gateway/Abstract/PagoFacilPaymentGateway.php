@@ -58,7 +58,7 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
     {
         global $woocommerce;
         $this->woocommerce = $woocommerce;
-        $this->has_fields   = TRUE;
+        $this->has_fields   = true;
         $this->init_form_fields();
         $this->init_settings();
         $this->is_description_empty();
@@ -66,7 +66,8 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
 
     abstract public function init_form_fields();
     abstract public function process_payment($order_id);
-    public function is_description_empty(){
+    public function is_description_empty()
+    {
         $this->showdesc = "";
     }
 
@@ -81,19 +82,19 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
      */
     protected function throwResponse($response)
     {
-        if(isset($response['texto'])){
-            $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['texto'] ).'<br>';
-            foreach( $response['error'] as $k => $v ){
+        if (isset($response['texto'])) {
+            $message = sprintf(__('Transaction Failed. %s', 'pagofacil'), $response['texto']).'<br>';
+            foreach ($response['error'] as $k => $v) {
                 $message .= $v.'<br>';
             }
             throw new PaymentError($message, $message);
-        }else{
+        } else {
             throw new PaymentError(
                 sprintf(
                     __('Transaction Failed. %s', 'pagofacil'),
                     $response['response']['message']
                 ),
-                sprintf( __('Transaction Failed. %s', 'pagofacil'), $response['response']['message'])
+                sprintf(__('Transaction Failed. %s', 'pagofacil'), $response['response']['message'])
             );
         }
     }
@@ -103,7 +104,7 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
      */
     protected function isWordPressError($response)
     {
-        if (is_wp_error($response) && $response['response']['code'] <= 200 && $response['response']['code'] > 300 ) {
+        if (is_wp_error($response) && $response['response']['code'] <= 200 && $response['response']['code'] > 300) {
             throw new HttpError("Gateway Error.". $response->get_error_message());
         }
     }
@@ -128,7 +129,8 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
      * @param $url string
      * @return string
      */
-    protected function forceSSL($url) {
+    protected function forceSSL($url)
+    {
         if (class_exists('WC_HTTPS')) {
             return WC_HTTPS::force_https_url($url);
         } else {
@@ -143,14 +145,14 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
     private function getUrlEnvironment()
     {
         $url = $this->pf_production_service;
-        if($this->tdsecure == 'yes'){
+        if ($this->tdsecure == 'yes') {
             $url = $this->pf_production_3ds_service;
             $this->setTitleRadioBtn('Credit Card-3DS');
         }
 
-        if($this->testmode == 'yes'){
+        if ($this->testmode == 'yes') {
             $url = $this->pf_sandbox_service;
-            if($this->tdsecure == 'yes'){
+            if ($this->tdsecure == 'yes') {
                 $url = $this->pf_sandbox_3ds_service;
             }
         }
@@ -165,32 +167,28 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
     {
         $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
 
-        if(isset($_SERVER["HTTP_CLIENT_IP"])
+        if (isset($_SERVER["HTTP_CLIENT_IP"])
             && (!empty($_SERVER["HTTP_CLIENT_IP"]))
             && (strtolower($_SERVER["HTTP_CLIENT_IP"]) != "unknown")
         ) {
             $ip = $_SERVER["HTTP_CLIENT_IP"];
-            if (strpos($ip, ",") !== FALSE)
-            {
+            if (strpos($ip, ",") !== false) {
                 $ip = substr($ip, 0, strpos($ip, ","));
             }
             return  trim($ip);
         }
 
-        if(
-            isset($_SERVER["HTTP_X_FORWARDED_FOR"])
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])
             && (!empty($_SERVER["HTTP_X_FORWARDED_FOR"]))
             && (strtolower($_SERVER["HTTP_X_FORWARDED_FOR"]) != "unknown")
         ) {
-            if (strpos($ip, ",") !== FALSE)
-            {
+            if (strpos($ip, ",") !== false) {
                 $ip = substr($ip, 0, strpos($ip, ","));
             }
             return  trim($ip);
         }
 
-        if (strpos($ip, ",") !== FALSE)
-        {
+        if (strpos($ip, ",") !== false) {
             $ip = substr($ip, 0, strpos($ip, ","));
         }
         return  trim($ip);
