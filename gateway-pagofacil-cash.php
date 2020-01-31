@@ -25,15 +25,7 @@ class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
         $this->concept      = $this->get_option('concept');
         $this->instructions     = $this->get_option('instructions');
 
-        if ($this->testmode == 'yes') {
-            $this->request_url = 'https://sandbox.pagofacil.tech/cash/charge';
-            $this->use_sucursal = $this->sucursal_test;
-            $this->use_usuario = $this->usuario_test;
-        } else {
-            $this->request_url = 'https://api.pagofacil.tech/cash/charge';
-            $this->use_sucursal = $this->sucursal;
-            $this->use_usuario = $this->usuario;
-        }
+        $this->getUrlEnvironment();
 
         add_action('woocommerce_thankyou', array( $this, 'receipt_page' ), 1);
         add_action('woocommerce_view_order', array( $this, 'receipt_page' ), 1);
@@ -47,8 +39,6 @@ class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
      */
     public function get_icon()
     {
-        global $woocommerce;
-
         $icon = '';
         if ($this->icon) {
             $icon = '<img src="' . $this->forceSSL($this->icon) . '" alt="' . $this->title . '" />';
@@ -72,8 +62,7 @@ class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
         <p><?php _e('PagoFácil Pagos en Efectivo', 'pagofacil'); ?></p>
         <table class="form-table">
             <?php
-            $this->generate_settings_html();
-            ?>
+            $this->generate_settings_html(); ?>
         </table><!--/.form-table-->
         <?php
     }
@@ -197,8 +186,7 @@ class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
             $store_codes = array();
         } else {
             $store_codes = $response->records;
-        }
-        ?>
+        } ?>
         <p class="form-row" style="width:230px;">
             <label><?php echo __('Tienda de conveniencia:', 'pagofacil') ?></label>
             <select name="pagofacil_cash_store_code" style="width:210px;">
@@ -207,8 +195,7 @@ class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
                     echo '<option value="'.$option->code.'">'
                         .$option->name.
                         '</option>';
-                }
-                ?>
+                } ?>
             </select>
         </p>
         <div class="clear"></div>
@@ -284,6 +271,19 @@ class woocommerce_pagofacil_cash extends PagoFacilPaymentGateway
         session_start();
         if (!empty($_SESSION['transaction']) && !empty($_SESSION['order_id']) && $_SESSION['order_id'] == $order_id) {
             include(dirname(__FILE__). '/template/confirm.php');
+        }
+    }
+
+    protected function getUrlEnvironment()
+    {
+        if ($this->testmode == 'yes') {
+            $this->request_url = 'https://sandbox.pagofacil.tech/cash/charge';
+            $this->use_sucursal = $this->sucursal_test;
+            $this->use_usuario = $this->usuario_test;
+        } else {
+            $this->request_url = 'https://api.pagofacil.tech/cash/charge';
+            $this->use_sucursal = $this->sucursal;
+            $this->use_usuario = $this->usuario;
         }
     }
 }

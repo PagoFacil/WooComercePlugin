@@ -115,15 +115,12 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
      */
     public function admin_options()
     {
-
         ?>
         <h3><?php _e('PagoFácil Direct', 'pagofacil'); ?></h3>
         <p><?php _e('PagoFácil Gateway works by charging the customers Credit Card on site.', 'pagofacil'); ?></p>
         <table class="form-table">
             <?php
-            // Generate the HTML For the settings form.
-            $this->generate_settings_html();
-            ?>
+            $this->generate_settings_html(); ?>
         </table><!--/.form-table-->
         <?php
     } // End admin_options()
@@ -133,7 +130,6 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
      */
     public function init_form_fields()
     {
-
         $currency_code_options = get_woocommerce_currencies();
 
         unset($currency_code_options['MXN']);
@@ -268,15 +264,14 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
                 <select name="pagofacil_direct_expdateyear">
                     <?php
                     $today = (int)date('y', time());
-                    $today1 = (int)date('Y', time());
-                    for ($i = 0; $i < 8; $i++) {
-                        ?>
+            $today1 = (int)date('Y', time());
+            for ($i = 0; $i < 8; $i++) {
+                ?>
                         <option value="<?php echo $today; ?>"><?php echo $today1; ?></option>
                         <?php
                         $today++;
-                        $today1++;
-                    }
-                    ?>
+                $today1++;
+            } ?>
                 </select>
             </p>
             <div class="clear"></div>
@@ -312,8 +307,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
                             array_push($msi_options[$keyValue[1]], $keyValue[0]);
                         }
                     }
-                }
-                ?>
+                } ?>
                 <p class="form-row" style="width:230px;">
                     <label>Installments</label>
                     <select name="pagofacil_direct_msi" style="width:210px;">
@@ -329,8 +323,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
                                     . $msi_label_options[$value] .
                                     '</option>';
                             }
-                        }
-                        ?>
+                        } ?>
                     </select>
                 </p>
                 <div class="clear"></div>
@@ -342,7 +335,6 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
     public function validate_fields()
     {
         if ($this->tdsecure != 'yes') {
-
             if (!$this->isCreditCardNumber($_POST['pagofacil_direct_creditcard'])) {
                 $this->showError(__('(Credit Card Number) is not valid.', 'pagofacil'));
             }
@@ -478,7 +470,6 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
      */
     public function process_payment_3ds(WC_Order $order)
     {
-
         $dataTransac = array(
             'idServicio' => $this->idServ3ds,
             "idPedido" => $order->get_id(),
@@ -671,7 +662,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
             'calleyNumero'      => urlencode($order->billing_address_1),
             'colonia'           => urlencode("N/A"),
             'municipio'         => urlencode($order->billing_city),
-            'estado'            => urlencode(($order->billing_state == '' ? "N/A" : $order->billing_state )),
+            'estado'            => urlencode(($order->billing_state == '' ? "N/A" : $order->billing_state)),
             'pais'              => urlencode($this->woocommerce->countries->countries[ $order->billing_country ]),
             'idPedido'          => urlencode($order->get_id()),
             'param1'            => urlencode(ltrim($order->get_order_number(), '#')),
