@@ -342,7 +342,6 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
     public function validate_fields()
     {
         if ($this->tdsecure != 'yes') {
-            global $woocommerce;
 
             if (!$this->isCreditCardNumber($_POST['pagofacil_direct_creditcard'])) {
                 $this->showError(__('(Credit Card Number) is not valid.', 'pagofacil'));
@@ -452,7 +451,7 @@ class woocommerce_pagofacil_direct extends PagoFacilPaymentGateway
      * @author Johnatan Ayala L.
      * @return string
      */
-    private function getUrlEnvironment()
+    protected function getUrlEnvironment()
     {
         if ($this->testmode == 'yes') {
             $url = $this->pf_sandbox_service;

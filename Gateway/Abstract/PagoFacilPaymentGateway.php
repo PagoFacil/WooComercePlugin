@@ -66,6 +66,8 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
 
     abstract public function init_form_fields();
     abstract public function process_payment($order_id);
+    abstract protected function getUrlEnvironment();
+
     public function is_description_empty()
     {
         $this->showdesc = "";
@@ -136,27 +138,6 @@ abstract class PagoFacilPaymentGateway extends WC_Payment_Gateway
         } else {
             return $this->woocommerce->force_ssl($url);
         }
-    }
-
-    /**
-     * Se define la URL/endpoint a utilizar para realizar las transacciones
-     * @return string
-     */
-    private function getUrlEnvironment()
-    {
-        $url = $this->pf_production_service;
-        if ($this->tdsecure == 'yes') {
-            $url = $this->pf_production_3ds_service;
-            $this->setTitleRadioBtn('Credit Card-3DS');
-        }
-
-        if ($this->testmode == 'yes') {
-            $url = $this->pf_sandbox_service;
-            if ($this->tdsecure == 'yes') {
-                $url = $this->pf_sandbox_3ds_service;
-            }
-        }
-        return $url;
     }
 
     /**
