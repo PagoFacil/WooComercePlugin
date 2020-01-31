@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Pago Facil Direct Gateway for WooCommerce v1.1\n"
+"Project-Id-Version: PagoFácil Direct Gateway for WooCommerce v1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2015-09-07 17:52:02+0000\n"
@@ -240,7 +240,7 @@ msgstr ""
 
 #: gateway-pagofacil-direct.php:152
 #@ pagofacil
-msgid "Credit Card"
+msgid "Credit Card and 3DS"
 msgstr ""
 
 #: gateway-pagofacil-direct.php:164
