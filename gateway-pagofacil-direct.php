@@ -8,7 +8,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     private $pf_sandbox_service = 'https://sandbox.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
     private $pf_sandbox_3ds_service = 'https://sandbox.pagofacil.tech/Woocommerce3ds/Form';
     private $pf_production_service = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
-    private $pf_production_3ds_service = 'https://api.pagofacil.tech/Woocommerce3ds/Form';
+    private $pf_production_3ds_service = 'http://transaccional.tech/Woocommerce3ds/Form';
     private $title_radioBtn = 'Credit Card';
 
     /**
@@ -719,7 +719,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
 
     /**
      * metodo/webhook que recibe la respuesta del servicio de 3DS de pagofacil
-     * @author Johnatan Ayala
+     * @author Johnatan Ayala L.
      * @param $_POST
      * @return redirect
      */
@@ -730,19 +730,18 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
             $objPF =  new PagoFacil_Descifrado_Descifrar();
             $dataResponse = $objPF->desencriptar_php72($_POST['response'], $cipherKey);
 
-            $order = new WC_Order($dataResponse->data->idPedido);
-            if($dataResponse->autorizado == $objPF::AUTORIZADO){
-                //Payment complete
+            $order = new WC_Order((int)$dataResponse->data->idPedido);
+            if($dataResponse->autorizado == $objPF::AUTORIZADO){//Payment complete
                 $order->add_order_note( sprintf( __('PagoFácil %s. The PagoFácil Transaction ID %s and Authorization ID %s.', 'pagofacil'), $dataResponse->pf_message, $dataResponse->transaccion, $dataResponse->autorizacion ) );
                 $order->payment_complete();
             }
-            elseif ($dataResponse->autorizado == $objPF::RECHAZADO){
-                //Payment failed
-                $order->update_status('failed', $dataResponse->pf_message);
+            elseif ($dataResponse->autorizado == $objPF::RECHAZADO){//Payment rejected
+                $order->update_status('failed');
+                $order->add_order_note($dataResponse->error, 1 );
             }
             else{
                 if(isset($dataResponse->texto)){
-                    $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->texto ).'<br>';
+                    $message = sprintf( __('Transaction Failed. %s', 'pagofacil'), $dataResponse->pf_message ).'<br>';
                     foreach( $dataResponse->error as $k => $v ){
                         $message .= $v.'<br>';
                     }

@@ -327,8 +327,6 @@ class woocommerce_pagofacil_cash extends WC_Payment_Gateway {
         );
 
         if (!is_wp_error($response) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) {
-
-            error_log(date("Y-m-d H:i:s")." -- Response: ".print_r($response, true)."\n", 3, "./logs/cash.log");
             $response = json_decode($response['body'],true);
 
             //die(print_r($response, true));
