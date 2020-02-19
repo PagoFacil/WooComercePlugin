@@ -8,7 +8,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
     private $pf_sandbox_service = 'https://sandbox.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
     private $pf_sandbox_3ds_service = 'https://sandbox.pagofacil.tech/Woocommerce3ds/Form';
     private $pf_production_service = 'https://api.pagofacil.tech/Wsrtransaccion/index/format/json/?method=transaccion';
-    private $pf_production_3ds_service = 'http://transaccional.tech/Woocommerce3ds/Form';
+    private $pf_production_3ds_service = 'https://api.pagofacil.tech/Woocommerce3ds/Form';
     private $title_radioBtn = 'Credit Card';
 
     /**
