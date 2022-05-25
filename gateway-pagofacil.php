@@ -19,9 +19,11 @@ function init_woocommerce_pagofacil_direct() {
 
 	if ( ! class_exists( 'Woocommerce' ) ) { return; }
 
-
+  
 	include 'gateway-pagofacil-direct.php';
 	include 'gateway-pagofacil-cash.php';
+	include 'gateway-pagofacil-spei.php';
+    include "PagoFacil_Descifrado_Descifrar.php";
 
 	/**
 	 * Add the gateway to WooCommerce
@@ -29,11 +31,10 @@ function init_woocommerce_pagofacil_direct() {
 	function add_pagofacil_direct_gateway( $methods ) {
 		$methods[] = 'woocommerce_pagofacil_direct'; 
 		$methods[] = 'woocommerce_pagofacil_cash'; 
+		$methods[] = 'woocommerce_pagofacil_spei';  
 
 		return $methods;
 	}
-
-
 
 	add_filter('woocommerce_payment_gateways', 'add_pagofacil_direct_gateway' );
 
