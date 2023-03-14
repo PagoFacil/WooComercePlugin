@@ -73,7 +73,7 @@ class PagoFacil_Descifrado_Descifrar
         $pos = 0;
         $result = '';
         while ($pos < strlen($hex_string)) {
-            if (strpos(" \t\n\r", $hex_string{$pos}) !== FALSE) {
+            if (strpos(" \t\n\r", $hex_string[$pos]) !== FALSE) {
                 $pos++;
             } else {
                 $code = hexdec(substr($hex_string, $pos, 2));
@@ -86,7 +86,7 @@ class PagoFacil_Descifrado_Descifrar
 
     private static function pkcs5_unpad($text)
     {
-        $pad = ord($text{strlen($text) - 1});
+        $pad = ord($text[strlen($text) - 1]);
         if ($pad > strlen($text))
             return false;
         if (strspn($text, chr($pad), strlen($text) - $pad) != $pad)
