@@ -616,6 +616,12 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
         $order = new WC_Order( $order_id );
         $order->billing_phone = str_replace( array( '( ', '-', ' ', ' )', '.' ), '', $order->billing_phone );
 
+
+	$zipCode = $order->billing_postcode;
+        if( empty( trim($zipCode) ) && isset($_POST['billing_codigo_postal']) ){
+            $zipCode = $_POST['billing_codigo_postal'];
+        }
+
         $transaction = array(
             'idServicio'        => urlencode($this->idServApi),
             'idSucursal'        => urlencode($this->sucursal),
@@ -624,7 +630,7 @@ class woocommerce_pagofacil_direct extends WC_Payment_Gateway {
             'apellidos'         => urlencode($order->billing_last_name),
             'numeroTarjeta'     => urlencode($_POST["pagofacil_direct_creditcard"]),
             'cvt'               => urlencode($_POST["pagofacil_direct_cvv"]),
-            'cp'                => urlencode($order->billing_postcode),
+            'cp'                => urlencode($zipCode),
             'mesExpiracion'     => urlencode($_POST["pagofacil_direct_expdatemonth"]),
             'anyoExpiracion'    => urlencode($_POST["pagofacil_direct_expdateyear"]),
             'monto'             => urlencode($order->get_total()),//formato 1000.00
